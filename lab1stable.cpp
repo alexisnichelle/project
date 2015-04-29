@@ -15,7 +15,7 @@
 #include <GL/glx.h>
 
 #include <GL/gl.h>
-//#include <GL/glut.h>
+#include <GL/glut.h>
 extern "C" {
 #include "fonts.h"
 }
@@ -24,7 +24,7 @@ extern "C" {
 #define WINDOW_WIDTH  800
 #define WINDOW_HEIGHT 600
 #define numbox 3
-#define MAX_PROJECTILES 10000
+
 #define MAX_PARTICLES 1
 #define GRAVITY 1
 
@@ -45,40 +45,18 @@ struct Shape {
 	Vec center;
 };
 
-struct Character {
+struct Particle {
 	Shape s;
 	Vec velocity;
-};
-struct Projectile {
-	Shape s;
-	Vec velocity;
-	int r;
-	int b;
-	int g;
 };
 
 struct Game {
 	Shape *box;
-	Character character;
-	Projectile *projectile;
+	Particle particle;
 	int n;
-    ~Game() {
-	delete [] box;
-	delete [] projectile;
-    }
+    ~Game() {delete [] box;}
     Game(){
     box = new Shape[numbox];
-    projectile = new Projectile[MAX_PROJECTILES];
-    //initialize projectiles to prevent nulls
-    for(int i = 0; i < MAX_PROJECTILES; i++){
-	Projectile p = projectile[i];
-	p.s.center.x = 0;
-	p.s.center.y = 0;
-	p.velocity.y = 0;
-	p.velocity.x = 0;
-	p.s.width = 0;
-	p.s.height = 0;
-    }
     //initialize boxes to prevent nulls
     for(int i = 0; i <numbox; i++){
         box[i].width = 1;
@@ -103,7 +81,6 @@ struct Game {
 	box[2].height = 5;
 	box[2].center.x = 300 + 5*65;
 	box[2].center.y = 340;
-	n=0;
     }
 };
 
@@ -214,33 +191,13 @@ void makeParticle(Game *game, int x, int y) {
 	if (game->n >= MAX_PARTICLES)
 		return;
 	//position of particle
-	Character *p = &game->character;
+	Particle *p = &game->particle;
 	p->s.center.x = x;
 	p->s.center.y = y;
-        p->s.width = CHARACTER_WIDTH;
-        p->s.height = CHARACTER_HEIGHT;
+    p->s.width = CHARACTER_WIDTH;
+    p->s.height = CHARACTER_HEIGHT;
 	p->velocity.y = -4.0;
 	p->velocity.x = 0;
-	game->n++;
-}
-
-void makeProjectile(Game *game, float x, float y,float xvel, float yvel,int r, int g, int b) {
-	if (game->n >= MAX_PROJECTILES){
-	std::cout <<"shits borked" <<" Make Projectile" <<x<<" "<<y<<std::endl;
-		return;
-		}
-	//position of particle
-	//std::cout <<"makeProjectile()" <<x<<" "<<y<<std::endl;
-	Projectile *p = &game->projectile[game->n];
-	p->r = r;
-	p->g = g;
-	p->b = b;
-	p->s.center.x = x;
-	p->s.center.y = y;
-        p->s.width = 2;
-        p->s.height = 2;
-	p->velocity.y = yvel;
-	p->velocity.x = xvel;
 	game->n++;
 }
 
@@ -256,8 +213,8 @@ void check_mouse(XEvent *e, Game *game)
 	if (e->type == ButtonPress) {
 		if (e->xbutton.button==1) {
 			//Left button was pressed
-			//int y = WINDOW_HEIGHT - e->xbutton.y;
-			makeParticle(game,200,190); //e->xbutton.x,y );
+			int y = WINDOW_HEIGHT - e->xbutton.y;
+			makeParticle(game, e->xbutton.x,y );
             start = true;
 			return;
 		}
@@ -277,8 +234,8 @@ void check_mouse(XEvent *e, Game *game)
 
 int check_keys(XEvent *e, Game *game)
 {
-    Character *p;
-    p = &game->character;
+    Particle *p;
+    p = &game->particle;
     int key = XLookupKeysym(&e->xkey, 0);
  
     //Was there input from the keyboard?
@@ -295,19 +252,32 @@ int check_keys(XEvent *e, Game *game)
         }
 
         if (key == XK_Up) {
-	    if(!((p->velocity.y > .1) || (p->velocity.y < -.1) ) ){
-		p->velocity.y = 30.0;
-	    }
+            p->velocity.y = 20.0;
         }
         
-        if (key == XK_Down) {
-	    makeProjectile(game, (p->s.center.x + p->s.width + 0.1),p->s.center.y,10.0,0.0,200,10,10);
-	
+        if (key == XK_KP_Space) {
+
         } 
 	}
 
     if (e->type == KeyRelease) {
 
+        /*depreciated velocity canceling
+         *
+        if (key == XK_Right) {
+            p->velocity.x = 0;
+        }
+
+        if (key == XK_Left) {
+            p->velocity.x = 0;
+        }*/
+
+
+        /* Depreciated fall velocity
+         *
+        if (key == XK_Up) {
+            p->velocity.y = -6.0;
+        } */
 
     }
 	return 0;
@@ -315,19 +285,14 @@ int check_keys(XEvent *e, Game *game)
 
 void movement(Game *game)
 {
-	Character *p;
-	Projectile *proj;
+	Particle *p;
+
 	if (game->n <= 0)
 		return;
 
-	p = &game->character;
-
-	for(int i = 0; i < game->n;i++){
-	    proj = &game->projectile[i];
-	    proj->s.center.x += proj->velocity.x;
-	}
+	p = &game->particle;
     //apply gravity
-        p->velocity.y -= 2.1;
+    p->velocity.y -= 2.1;
     //apply velocity  
 	p->s.center.x += p->velocity.x;
 	p->s.center.y += p->velocity.y;
@@ -341,16 +306,47 @@ void movement(Game *game)
             (p->s.center.x - p->s.width) <= b->center.x + b->width &&
             (p->s.center.y - p->s.height) < b->center.y + b->height &&
             (p->s.center.y + p->s.height) > b->center.y - b->height){ 
+        //collision with box
+        /*depreciated code for collision
+            p->s.center.y = game->box[i].center.y + game->box[i].height + p->s.height + 0.1;
+        if((p->s.center.x + p->s.width) >= game->box[i].center.x - game->box[i].width &&
+            (p->s.center.x - p->s.width) <= game->box[i].center.x + game->box[i].width &&
+            (p->s.center.y - p->s.height) < game->box[i].center.y + game->box[i].height &&
+            (p->s.center.y + p->s.height) > game->box[i].center.y - game->box[i].height){ 
+        //collision with box
+        */
             if(/*(p->s.center.y < b->center.y) &&*/ (p->velocity.y > 0)){//collision upwards??
-		p->velocity.y = 0;
-		p->s.center.y = b->center.y - b->height -p->s.height - 0.1;
             } else {
                 p->s.center.y = b->center.y + b->height + p->s.height + 0.1;
                 p->velocity.y = 0;
             }
         }
     }
+    //checks for upwards collision
+    /*
+    if(p->s.center.x >= game->box.center.x - game->box.width &&
+        p->s.center.x <= game->box.center.x + game->box.width &&
+        (p->s.center.y + p->s.height) > game->box.center.y - game->box.height){ 
+        //collision with box
+        p->s.center.y = game->box.center.y + game->box.height + p->s.height + 0.1;
+        p->velocity.y = 0;
+    }
+    */
 
+        /*
+        float d0, d1, dist;
+        d0 = p->s.center.x - game->box.center.x;
+        d1 = p->s.center.y - game->box.center.y;
+        dist = sqrt(d0*d0 + d1*d1);
+        if(dist < game->box.center) {
+            //move particle to circle edge
+            p->s.center.x = game->box.center.x + (d0/dist);
+            p->s.center.y = game->box.center.y + (d1/dist);
+            //collision
+            //p->velocity.x += d0/dist * 2.0;
+            //p->velocity.y += d1/dist * 2.0;
+        } */
+ 
 
 	//check for off-screen
     //IF OFF SCREEN = DEAD 
@@ -361,10 +357,7 @@ void movement(Game *game)
     //movement is called post checkkeys
     //set X velocity to zero unless jumping or a key is depressed
     if(!((p->velocity.y > 0.1) || (p->velocity.y < -.1))){
-        p->velocity.x /= 1.5;
-	if((p->velocity.x > -.5) && (p->velocity.x < .5)){
-	    p->velocity.x = 0;
-	}
+        p->velocity.x = 0;
     }
 }
 
@@ -377,42 +370,25 @@ void render(Game *game)
 	//draw platforms
 	Shape *s;
 	glColor3ub(90,140,90);
-        for(int i=0;i<numbox;i++){
-	    s = &game->box[i];
-	    glPushMatrix();
-	    glTranslatef(s->center.x, s->center.y, s->center.z);
-	    w = s->width;
-	    h = s->height;
-	    glBegin(GL_QUADS);
-	        glVertex2i(-w,-h);
-		glVertex2i(-w, h);
-		glVertex2i( w, h);
-		glVertex2i( w,-h);
+    for(int i=0;i<numbox;i++){
+        s = &game->box[i];
+        glPushMatrix();
+        glTranslatef(s->center.x, s->center.y, s->center.z);
+        w = s->width;
+        h = s->height;
+        glBegin(GL_QUADS);
+            glVertex2i(-w,-h);
+		    glVertex2i(-w, h);
+		    glVertex2i( w, h);
+		    glVertex2i( w,-h);
 	    glEnd();
 	    glPopMatrix();
-        }
-	//draw projectiles here
-	Projectile *p;
-        for(int i=0;i<game->n;i++){
-	    p = &game->projectile[i];
-	    glColor3ub(p->r,p->g,p->b);
-	    glPushMatrix();
-	    glTranslatef(p->s.center.x, p->s.center.y, p->s.center.z);
-	    w = p->s.width;
-	    h = p->s.height;
-	    glBegin(GL_QUADS);
-	        glVertex2i(-w,-h);
-		glVertex2i(-w, h);
-		glVertex2i( w, h);
-		glVertex2i( w,-h);
-	    glEnd();
-	    glPopMatrix();
-        }
+    }
 
 	//draw all particles here(character)
 	glPushMatrix();
 	glColor3ub(150,160,220);
-	Vec *c = &game->character.s.center;
+	Vec *c = &game->particle.s.center;
 	w = CHARACTER_WIDTH;
 	h = CHARACTER_HEIGHT;
 	glBegin(GL_QUADS);
