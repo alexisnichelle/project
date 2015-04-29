@@ -32,7 +32,7 @@ extern "C" {
 Display *dpy;
 Window win;
 GLXContext glc;
-
+int keys[65536];
 //Structures
 
 struct Vec {
@@ -72,6 +72,7 @@ struct Game {
     //initialize projectiles to prevent nulls
     for(int i = 0; i < MAX_PROJECTILES; i++){
 	Projectile p = projectile[i];
+    p=p;
 	p.s.center.x = 0;
 	p.s.center.y = 0;
 	p.velocity.y = 0;
@@ -126,6 +127,11 @@ int main(void)
 	//declare game object
 	Game game;
 	game.n=0;
+
+    //zero out array of all possible key strokes
+    for(int i = 0; i < 65536;i++){
+        keys[i] = 0;
+    }
 
 	//declare a box shape
     /*depreciated box assignment
@@ -242,10 +248,14 @@ void makeProjectile(Game *game, float x, float y,float xvel, float yvel,int r, i
 	p->velocity.y = yvel;
 	p->velocity.x = xvel;
 	game->n++;
+    p=p;
 }
 
 void check_mouse(XEvent *e, Game *game)
 {
+    //clear stupid warning
+    game = game;
+
 	static int savex = 0;
 	static int savey = 0;
 	static int n = 0;
@@ -275,11 +285,30 @@ void check_mouse(XEvent *e, Game *game)
 	}
 }
 
+//gather key inputs, set array
 int check_keys(XEvent *e, Game *game)
 {
+    //clear stupid warning
+    game = game;
+
+    int key = XLookupKeysym(&e->xkey, 0);
+	if (e->type == KeyPress) {
+		if (key == XK_Escape) {
+			return 1;
+		}
+        keys[key] = 1;
+        return 0;
+    }
+
+	if (e->type == KeyRelease) {
+        keys[key] = 0;
+        return 0;
+    }else{
+        return 0;
+    }
+    /*depreciated keychecks, keep for debugging
     Character *p;
     p = &game->character;
-    int key = XLookupKeysym(&e->xkey, 0);
  
     //Was there input from the keyboard?
 	if (e->type == KeyPress) {
@@ -310,11 +339,35 @@ int check_keys(XEvent *e, Game *game)
 
 
     }
-	return 0;
+	return 0;*/
 }
-
+void checkMovement(Game *game){
+    Character *p;
+    p = &game->character;
+ 
+    if(keys[XK_Right]){
+        p->velocity.x = 6;
+    }
+    if(keys[XK_Left]){
+        p->velocity.x = -6;
+    }
+    if(keys[XK_Up]){
+    
+	    if(!((p->velocity.y > .1) || (p->velocity.y < -.1) ) ){
+		p->velocity.y = 30.0;
+	    }
+    }
+    if(keys[XK_Down]){
+	    makeProjectile(game, (p->s.center.x + p->s.width + 0.1),p->s.center.y,10.0,0.0,200,10,10);
+    }
+    game = game;
+}
 void movement(Game *game)
 {
+
+   // if(!start){
+        checkMovement(game);
+   // }
 	Character *p;
 	Projectile *proj;
 	if (game->n <= 0)
