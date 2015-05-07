@@ -13,7 +13,10 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <GL/glx.h>
+
 #include "bryanK.h"
+#include "alexisR.h"
+
 #include <GL/gl.h>
 //#include <GL/glut.h>
 extern "C" {
@@ -133,14 +136,6 @@ int main(void)
         keys[i] = 0;
     }
 
-	//declare a box shape
-    /*depreciated box assignment
-    game.box.width = 800;
-	game.box.height = 70;
-	game.box.center.x = 120 + 5*65;
-	game.box.center.y = 70;
-    */
-
 	//start animation
 	while(!done) {
 		while(XPending(dpy)) {
@@ -213,7 +208,9 @@ void init_opengl(void)
 	glClearColor(0.1, 0.1, 0.1, 1.0);
     //initialize fonts
     glEnable(GL_TEXTURE_2D);
-    initialize_fonts(); 
+    initialize_fonts();
+
+	texture();
 }
 
 void makeParticle(Game *game, int x, int y) {
@@ -425,7 +422,8 @@ void render(Game *game)
 {
 	float w, h;
 	glClear(GL_COLOR_BUFFER_BIT);
-	//Draw shapes...
+
+	r_texture();
 
 	//draw platforms
 	Shape *s;
