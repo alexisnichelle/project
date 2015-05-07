@@ -13,7 +13,7 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <GL/glx.h>
-
+#include "bryanK.h"
 #include <GL/gl.h>
 //#include <GL/glut.h>
 extern "C" {
@@ -468,6 +468,7 @@ void render(Game *game)
 	Vec *c = &game->character.s.center;
 	w = CHARACTER_WIDTH;
 	h = CHARACTER_HEIGHT;
+    //drawCharacter(c->x,c->y,w,h);
 	glBegin(GL_QUADS);
 		glVertex2i(c->x-w, c->y-h);
 		glVertex2i(c->x-w, c->y+h);
@@ -475,7 +476,7 @@ void render(Game *game)
 		glVertex2i(c->x+w, c->y-h);
 	glEnd();
 	glPopMatrix();
-
+    
     //click to start
     if (!start) {
         Rect r;
