@@ -45,7 +45,7 @@ unsigned char *buildAlphaData(Ppmimage *img)
     unsigned char *data = (unsigned char *)img->data;
     newdata = new unsigned char[img->width *img->height * 4];
     ptr = newdata;
-    for (int i=0; i<img->width * img->height * 3; i+3) {
+    for (int i=0; i<img->width * img->height * 3; i+=3) {
         a = *(data+0);
         b = *(data+1);
         c = *(data+2);
