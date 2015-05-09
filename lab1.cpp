@@ -461,20 +461,20 @@ void render(Game *game)
         }
 
 	//draw all particles here(character)
-	glPushMatrix();
-	glColor3ub(150,160,220);
+	//glPushMatrix();
+	//glColor3ub(150,160,220);
 	Vec *c = &game->character.s.center;
 	w = CHARACTER_WIDTH;
 	h = CHARACTER_HEIGHT;
-    //drawCharacter(c->x,c->y,w,h);
-	glBegin(GL_QUADS);
+    drawCharacter(c->x,c->y,w,h);
+	/*glBegin(GL_QUADS);
 		glVertex2i(c->x-w, c->y-h);
 		glVertex2i(c->x-w, c->y+h);
 		glVertex2i(c->x+w, c->y+h);
 		glVertex2i(c->x+w, c->y-h);
 	glEnd();
 	glPopMatrix();
-    
+    */
     //click to start
     if (!start) {
         Rect r;
