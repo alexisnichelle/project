@@ -120,7 +120,9 @@ void check_mouse(XEvent *e, Game *game);
 int check_keys(XEvent *e, Game *game);
 void movement(Game *game);
 void render(Game *game);
-bool start = false;
+bool start = true;
+bool mission = false;
+
 
 int main(void)
 {
@@ -142,7 +144,7 @@ int main(void)
 		while(XPending(dpy)) {
 			XEvent e;
 			XNextEvent(dpy, &e);
-            if(!start)
+            if(start)
 		    	check_mouse(&e, &game);
 			done = check_keys(&e, &game);
 		}
@@ -266,7 +268,8 @@ void check_mouse(XEvent *e, Game *game)
 			//Left button was pressed
 			//int y = WINDOW_HEIGHT - e->xbutton.y;
 			makeParticle(game,200,190); //e->xbutton.x,y );
-            start = true;
+            start = false;
+	    mission = true;
 			return;
 		}
 		if (e->xbutton.button==3) {
@@ -392,8 +395,8 @@ void movement(Game *game)
             (p->s.center.x - p->s.width) <= b->center.x + b->width &&
             (p->s.center.y - p->s.height) < b->center.y + b->height &&
             (p->s.center.y + p->s.height) > b->center.y - b->height){ 
-            if(/*(p->s.center.y < b->center.y) &&*/ (p->velocity.y > 0)){//collision upwards??
-		p->velocity.y = 0;
+            if((p->s.center.y < b->center.y) && (p->velocity.y > 0)){//collision upwards??
+		p->velocity.y = -.11;
 		p->s.center.y = b->center.y - b->height -p->s.height - 0.1;
             } else {
                 p->s.center.y = b->center.y + b->height + p->s.height + 0.1;
@@ -426,6 +429,9 @@ void render(Game *game)
 
 	r_texture();
 
+	if(mission){
+	//temp disable texture to allow for basic color shapes
+    	glDisable(GL_TEXTURE_2D);
 	//draw platforms
 	Shape *s;
 	glColor3ub(90,140,90);
@@ -468,6 +474,8 @@ void render(Game *game)
 	w = CHARACTER_WIDTH;
 	h = CHARACTER_HEIGHT;
     drawCharacter(c->x,c->y,w,h);
+    //re-enable textures after basic shapes are done
+    glEnable(GL_TEXTURE_2D);
 	/*glBegin(GL_QUADS);
 		glVertex2i(c->x-w, c->y-h);
 		glVertex2i(c->x-w, c->y+h);
@@ -476,8 +484,13 @@ void render(Game *game)
 	glEnd();
 	glPopMatrix();
     */
+
+
+
+	}
     //click to start
-    if (!start) {
+
+    if (start) {
         Rect r;
         glBindTexture(GL_TEXTURE_2D, 0);
         glEnable(GL_TEXTURE_2D);
