@@ -1,3 +1,8 @@
+//Program: CS335 Lab 6 / Homework 3
+//Author: Alexis Ragus
+//Purpose: Refractoring of CS335 project
+//
+
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
