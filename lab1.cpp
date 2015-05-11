@@ -3,6 +3,9 @@
 //
 // maybe call it UberDude?
 //
+// WE need to have a talk
+// coding stlye discussion must occur now
+// because spaces > tabs
 //
 //
 #include <iostream>
