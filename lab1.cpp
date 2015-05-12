@@ -16,7 +16,7 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <GL/glx.h>
-
+#include <GL/glut.h>
 #include "bryanK.h"
 #include "alexisR.h"
 #include "tinaT.h"
@@ -219,6 +219,7 @@ void init_opengl(void)
 	initialize_fonts();
 
 	texture();
+    buildBackgroundImage();
 }
 
 void makeParticle(Game *game, int x, int y) 
@@ -435,15 +436,25 @@ void render(Game *game)
 {
 	float w, h;
 	glClear(GL_COLOR_BUFFER_BIT);
-
-	r_texture();
+    Vec *c = &game->character.s.center;
+    int left = c->x -(WINDOW_WIDTH/2);
+    int right = left + (WINDOW_WIDTH);
+    int top = c->y + (WINDOW_HEIGHT/2);
+    int bottom = top - WINDOW_HEIGHT;
 
 	if (mission) {
+
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluOrtho2D(left, right, bottom, top); 
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        tileBackground();
 		//temp disable texture to allow for basic color shapes
 		glDisable(GL_TEXTURE_2D);
 		//draw platforms
 		Shape *s;
-		glColor3ub(90,140,90);
+		glColor3ub(90,240,90);
 		for (int i=0;i<numbox;i++) {
 			s = &game->box[i];
 			glPushMatrix();
@@ -479,7 +490,6 @@ void render(Game *game)
 		//draw all particles here(character)
 		//glPushMatrix();
 		//glColor3ub(150,160,220);
-		Vec *c = &game->character.s.center;
 		w = CHARACTER_WIDTH;
 		h = CHARACTER_HEIGHT;
 		drawCharacter(c->x,c->y,w,h);
@@ -500,6 +510,7 @@ void render(Game *game)
 	//click to start
 
 	if (start) {
+	r_texture();
 		Rect r;
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glEnable(GL_TEXTURE_2D);

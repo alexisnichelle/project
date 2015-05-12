@@ -18,6 +18,10 @@
 extern "C" {
 #include "fonts.h"
 }
+Ppmimage *bgImage = NULL;
+GLuint bgTexture;
+int bg = 1;
+
 
 //prototype char draw, rectangle to be replaced with sprite
 void drawCharacter(float x, float y, int w, int h){
@@ -32,6 +36,45 @@ void drawCharacter(float x, float y, int w, int h){
     glEnd();
     glPopMatrix();
 }
+
+
+void buildBackgroundImage(void) {
+    //clear the screen
+    glClearColor(1.0,1.0,1.0,1.0);
+    bgImage = ppm6GetImage("./images/bgimage.ppm");
+    glGenTextures(1, &bgTexture);
+
+    glBindTexture(GL_TEXTURE_2D, bgTexture);
+
+
+    glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D,0,3,bgImage->width,bgImage->height,0,
+            GL_RGB,GL_UNSIGNED_BYTE,bgImage->data);
+}
+
+void tileBackground(void) {
+    glEnable(GL_TEXTURE_2D);
+    glColor3f(1.0,1.0,1.0);
+    if(bg){
+        for(int i = -5; i < 5; i++){
+            for( int j = -4; j < 21; j++){
+                int y = i * 300;
+                int x = j*300;
+                glBindTexture(GL_TEXTURE_2D, bgTexture);
+                glBegin(GL_QUADS);
+                glTexCoord2f(0.0f, 1.0f); glVertex2i(x, y);
+                glTexCoord2f(0.0f, 0.0f); glVertex2i(x, y+300);
+                glTexCoord2f(1.0f, 0.0f); glVertex2i(x+300, y+300);
+                glTexCoord2f(1.0f, 1.0f); glVertex2i(x+300, y);
+                glEnd();
+            }
+        }
+    }
+    glDisable(GL_TEXTURE_2D);
+}
+
+
 
 
 
