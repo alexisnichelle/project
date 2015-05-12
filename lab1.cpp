@@ -46,7 +46,7 @@ struct Shape {
 };
 
 struct Character {
-	Shape s;
+	Shape s, h;
 	Vec velocity;
 };
 struct Projectile {
@@ -466,6 +466,7 @@ void render(Game *game)
 	glPushMatrix();
 	glColor3ub(150,160,220);
 	Vec *c = &game->character.s.center;
+    Vec *d = &game->character.s.center;
 	w = CHARACTER_WIDTH;
 	h = CHARACTER_HEIGHT;
 	glBegin(GL_QUADS);
@@ -474,6 +475,12 @@ void render(Game *game)
 		glVertex2i(c->x+w, c->y+h);
 		glVertex2i(c->x+w, c->y-h);
 	glEnd();
+    glBegin(GL_QUADS);
+        glVertex2i(d->x-10, d->y+h);
+        glVertex2i(d->x-10, d->y+h+10);
+        glVertex2i(d->x+10, d->y+h+10);
+        glVertex2i(d->x+10, d->y+h);
+    glEnd();
 	glPopMatrix();
 
     //click to start
