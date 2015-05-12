@@ -14,13 +14,14 @@
 #include <X11/keysym.h>
 #include <GL/glx.h>
 #include <GL/gl.h>
+#include <GL/glut.h>
 #include "ppm.h"
 extern "C" {
 #include "fonts.h"
 }
 Ppmimage *bgImage = NULL;
 GLuint bgTexture;
-int bg = 1;
+static int bg = 0;
 
 
 //prototype char draw, rectangle to be replaced with sprite
@@ -51,6 +52,17 @@ void buildBackgroundImage(void) {
     glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D,0,3,bgImage->width,bgImage->height,0,
             GL_RGB,GL_UNSIGNED_BYTE,bgImage->data);
+    if(bgImage != NULL){
+        bg = 1;
+    }
+}
+
+void centerCamera(int left,int right, int bottom, int top){
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(left, right, bottom, top);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 }
 
 void tileBackground(void) {
