@@ -78,12 +78,14 @@ void tileBackground(void) {
 }
 
 void centerCamera(int left,int right, int bottom, int top){
-    //clear scrub warnin
+    //clear scrub warnings
+    top = top; bottom = bottom;
+    //end warning clear
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     //glViewport(left,bottom,WINDOW_WIDTH,WINDOW_HEIGHT);
     //gluOrtho2D(left, right, bottom, top);
-    glOrtho(left, right, bottom, top,-1,1);
+    glOrtho(left, right, 0, WINDOW_HEIGHT,-1,1);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
