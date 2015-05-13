@@ -53,7 +53,7 @@ struct Shape {
 };
 
 struct Character {
-	Shape s, h;
+	Shape s;
 	Vec velocity;
 };
 struct Projectile {
@@ -356,10 +356,10 @@ void checkMovement(Game *game)
 	p = &game->character;
 
 	if (keys[XK_Right]) {
-        p->velocity.x = 6;
+		p->velocity.x = 6;
 	}
 	if (keys[XK_Left]) {
-        p->velocity.x = -6;
+		p->velocity.x = -6;
 	}
 	if (keys[XK_Up]) {
 
@@ -436,77 +436,6 @@ void render(Game *game)
 {
 	float w, h;
 	glClear(GL_COLOR_BUFFER_BIT);
-<<<<<<< HEAD
-	//Draw shapes...
-
-	//draw platforms
-	Shape *s;
-	glColor3ub(90,140,90);
-        for(int i=0;i<numbox;i++){
-	    s = &game->box[i];
-	    glPushMatrix();
-	    glTranslatef(s->center.x, s->center.y, s->center.z);
-	    w = s->width;
-	    h = s->height;
-	    glBegin(GL_QUADS);
-	        glVertex2i(-w,-h);
-		glVertex2i(-w, h);
-		glVertex2i( w, h);
-		glVertex2i( w,-h);
-	    glEnd();
-	    glPopMatrix();
-        }
-	//draw projectiles here
-	Projectile *p;
-        for(int i=0;i<game->n;i++){
-	    p = &game->projectile[i];
-	    glColor3ub(p->r,p->g,p->b);
-	    glPushMatrix();
-	    glTranslatef(p->s.center.x, p->s.center.y, p->s.center.z);
-	    w = p->s.width;
-	    h = p->s.height;
-	    glBegin(GL_QUADS);
-	        glVertex2i(-w,-h);
-		glVertex2i(-w, h);
-		glVertex2i( w, h);
-		glVertex2i( w,-h);
-	    glEnd();
-	    glPopMatrix();
-        }
-
-	//draw all particles here(character)
-	glPushMatrix();
-	glColor3ub(150,160,220);
-	Vec *c = &game->character.s.center;
-    Vec *d = &game->character.s.center;
-	w = CHARACTER_WIDTH;
-	h = CHARACTER_HEIGHT;
-	glBegin(GL_QUADS);
-		glVertex2i(c->x-w, c->y-h);
-		glVertex2i(c->x-w, c->y+h);
-		glVertex2i(c->x+w, c->y+h);
-		glVertex2i(c->x+w, c->y-h);
-	glEnd();
-    glBegin(GL_QUADS);
-        glVertex2i(d->x-10, d->y+h);
-        glVertex2i(d->x-10, d->y+h+10);
-        glVertex2i(d->x+10, d->y+h+10);
-        glVertex2i(d->x+10, d->y+h);
-    glEnd();
-	glPopMatrix();
-
-    //click to start
-    if (!start) {
-        Rect r;
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glEnable(GL_TEXTURE_2D);
-    
-        r.bot = 570;
-        r.left = 10;
-        r.center = 0;
-        ggprint16(&r, 16, 0x00ffffff, "CLICK TO START!");
-    }
-=======
     Vec *c = &game->character.s.center;
     int left = c->x -(WINDOW_WIDTH/2);
     int right = left + (WINDOW_WIDTH);
@@ -514,7 +443,12 @@ void render(Game *game)
     int bottom = top - WINDOW_HEIGHT;
 
 	if (mission) {
-        centerCamera(left,right,bottom,top);
+
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluOrtho2D(left, right, bottom, top); 
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
         tileBackground();
 		//temp disable texture to allow for basic color shapes
 		glDisable(GL_TEXTURE_2D);
@@ -554,11 +488,23 @@ void render(Game *game)
 		}
 
 		//draw all particles here(character)
+		//glPushMatrix();
+		//glColor3ub(150,160,220);
 		w = CHARACTER_WIDTH;
 		h = CHARACTER_HEIGHT;
 		drawCharacter(c->x,c->y,w,h);
 		//re-enable textures after basic shapes are done
 		glEnable(GL_TEXTURE_2D);
+		/*glBegin(GL_QUADS);
+		  glVertex2i(c->x-w, c->y-h);
+		  glVertex2i(c->x-w, c->y+h);
+		  glVertex2i(c->x+w, c->y+h);
+		  glVertex2i(c->x+w, c->y-h);
+		  glEnd();
+		  glPopMatrix();
+		 */
+
+
 
 	}
 	//click to start
@@ -574,7 +520,6 @@ void render(Game *game)
 		r.center = 0;
 		ggprint16(&r, 16, 0x00ffffff, "CLICK TO START!");
 	}
->>>>>>> fcbf8a8e9575c74cb2e259e901c7456f0a599ae3
 }
 
 
