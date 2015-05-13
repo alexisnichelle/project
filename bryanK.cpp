@@ -14,11 +14,13 @@
 #include <X11/keysym.h>
 #include <GL/glx.h>
 #include <GL/gl.h>
-#include <GL/glut.h>
+//#include <GL/freeglut.h>
 #include "ppm.h"
 extern "C" {
 #include "fonts.h"
 }
+#define WINDOW_WIDTH  800
+#define WINDOW_HEIGHT 600
 Ppmimage *bgImage = NULL;
 GLuint bgTexture;
 int bg = 1;
@@ -76,9 +78,13 @@ void tileBackground(void) {
 }
 
 void centerCamera(int left,int right, int bottom, int top){
+    //clear scrub warnin
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(left, right, bottom, top);
+    //glViewport(left,bottom,WINDOW_WIDTH,WINDOW_HEIGHT);
+    //gluOrtho2D(left, right, bottom, top);
+    glOrtho(left, right, bottom, top,-1,1);
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }

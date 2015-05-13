@@ -16,7 +16,7 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <GL/glx.h>
-#include <GL/glut.h>
+//#include <GL/glut.h>
 #include "bryanK.h"
 #include "alexisR.h"
 #include "tinaT.h"
@@ -125,6 +125,7 @@ void movement(Game *game);
 void render(Game *game);
 bool start = true;
 bool mission = false;
+bool dead = false;
 
 
 int main(void)
@@ -147,7 +148,7 @@ int main(void)
 		while (XPending(dpy)) {
 			XEvent e;
 			XNextEvent(dpy, &e);
-			if (start)
+			if (start||dead)
 				check_mouse(&e, &game);
 			done = check_keys(&e, &game);
 		}
@@ -275,9 +276,15 @@ void check_mouse(XEvent *e, Game *game)
 		if (e->xbutton.button==1) {
 			//Left button was pressed
 			//int y = WINDOW_HEIGHT - e->xbutton.y;
-			makeParticle(game,200,190); //e->xbutton.x,y );
-			start = false;
-			mission = true;
+			if(start){
+				makeParticle(game,200,190); //e->xbutton.x,y );
+				start = false;
+				mission = true;
+			}
+			if(dead){
+			    dead = false;
+			    mission = true;
+			}
 			return;
 		}
 		if (e->xbutton.button==3) {
@@ -417,9 +424,17 @@ void movement(Game *game)
 
 
 	//check for off-screen
-	//IF OFF SCREEN = DEAD 
-	if (p->s.center.y < 0.0) {
-		game->n = 0;
+	//IF OFF SCREEN = DEAD
+	
+
+	//if off platform reset to start loc 200,190	
+	if (p->s.center.y < -200.0) {
+	    p->s.center.x = 200;
+	    p->s.center.y = 190;
+	    std::cout <<"you died"<<std::endl;
+	    dead = true;
+	    mission = false;
+
 	}
 
 	//movement is called post checkkeys
@@ -495,6 +510,19 @@ void render(Game *game)
 	}
 	//click to start
 
+	if (dead) {
+        centerCamera(0,WINDOW_WIDTH,0,WINDOW_HEIGHT);
+
+	r_texture();
+		Rect r;
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glEnable(GL_TEXTURE_2D);
+
+		r.bot = 570;
+		r.left = 10;
+		r.center = 0;
+		ggprint16(&r, 16, 0x00ffffff, "You died, Click to restart!");
+	}
 	if (start) {
 	r_texture();
 		Rect r;
