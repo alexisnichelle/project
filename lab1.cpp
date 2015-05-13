@@ -39,6 +39,9 @@ extern "C" {
 Display *dpy;
 Window win;
 GLXContext glc;
+
+//global values, dont misuse
+static int lives = 3;
 int keys[65536];
 //Structures
 
@@ -282,8 +285,10 @@ void check_mouse(XEvent *e, Game *game)
                 mission = true;
             }
             if(dead){
-                dead = false;
-                mission = true;
+                if(lives > 0) {
+                    dead = false;
+                    mission = true;
+                }
             }
             return;
         }
@@ -434,7 +439,7 @@ void movement(Game *game)
         std::cout <<"you died"<<std::endl;
         dead = true;
         mission = false;
-
+        lives--;
     }
 
     //movement is called post checkkeys
@@ -458,11 +463,20 @@ void render(Game *game)
     int bottom = top - WINDOW_HEIGHT;
 
     if (mission) {
+       
 
         centerCamera(left,right,bottom,top);
         tileBackground();
-        //temp disable texture to allow for basic color shapes
+        Rect r;
+        r.bot = 570;
+        r.left = c->x - 300;
+        r.center = c->x;
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glEnable(GL_TEXTURE_2D);
+        ggprint16(&r, 16, 0x00ffffff, "Lives: %i",lives);
         glDisable(GL_TEXTURE_2D);
+
+        //temp disable texture to allow for basic color shapes
         //draw platforms
         Shape *s;
         glColor3ub(90,240,90);
@@ -522,7 +536,12 @@ void render(Game *game)
         r.bot = 570;
         r.left = 10;
         r.center = 0;
-        ggprint16(&r, 16, 0x00ffffff, "You died, Click to restart!");
+        if( lives > 0 ){
+            ggprint16(&r, 16, 0x00ffffff, "You died, Click to respawn!");
+        }
+        if( lives <= 0 ){
+            ggprint16(&r, 16, 0x00ffffff, "Game Over");
+        }
     }
     if (start) {
     r_texture();
