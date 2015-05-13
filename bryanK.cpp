@@ -14,6 +14,7 @@
 #include <X11/keysym.h>
 #include <GL/glx.h>
 #include <GL/gl.h>
+#include <GL/glut.h>
 #include "ppm.h"
 extern "C" {
 #include "fonts.h"
@@ -29,10 +30,10 @@ void drawCharacter(float x, float y, int w, int h){
     glColor3ub(150,160,220);
     //draw quad as temp to allow for physics implementation
     glBegin(GL_QUADS);
-        glVertex2i(x-w,y-h);
-        glVertex2i(x-w,y+h);
-        glVertex2i(x+w,y+h);
-        glVertex2i(x+w,y-h);
+    glVertex2i(x-w,y-h);
+    glVertex2i(x-w,y+h);
+    glVertex2i(x+w,y+h);
+    glVertex2i(x+w,y-h);
     glEnd();
     glPopMatrix();
 }
@@ -72,6 +73,14 @@ void tileBackground(void) {
         }
     }
     glDisable(GL_TEXTURE_2D);
+}
+
+void centerCamera(int left,int right, int bottom, int top){
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(left, right, bottom, top);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 }
 
 

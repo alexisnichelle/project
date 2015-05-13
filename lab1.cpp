@@ -444,11 +444,7 @@ void render(Game *game)
 
 	if (mission) {
 
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        gluOrtho2D(left, right, bottom, top); 
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+        centerCamera(left,right,bottom,top);
         tileBackground();
 		//temp disable texture to allow for basic color shapes
 		glDisable(GL_TEXTURE_2D);
@@ -488,21 +484,11 @@ void render(Game *game)
 		}
 
 		//draw all particles here(character)
-		//glPushMatrix();
-		//glColor3ub(150,160,220);
 		w = CHARACTER_WIDTH;
 		h = CHARACTER_HEIGHT;
 		drawCharacter(c->x,c->y,w,h);
 		//re-enable textures after basic shapes are done
 		glEnable(GL_TEXTURE_2D);
-		/*glBegin(GL_QUADS);
-		  glVertex2i(c->x-w, c->y-h);
-		  glVertex2i(c->x-w, c->y+h);
-		  glVertex2i(c->x+w, c->y+h);
-		  glVertex2i(c->x+w, c->y-h);
-		  glEnd();
-		  glPopMatrix();
-		 */
 
 
 
