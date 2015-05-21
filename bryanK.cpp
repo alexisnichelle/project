@@ -14,7 +14,6 @@
 #include <X11/keysym.h>
 #include <GL/glx.h>
 #include <GL/gl.h>
-//#include <GL/freeglut.h>
 #include "ppm.h"
 extern "C" {
 #include "fonts.h"
@@ -40,6 +39,19 @@ void drawCharacter(float x, float y, int w, int h){
     glPopMatrix();
 }
 
+void drawIdleSprite(float x, float y, int w, int h){
+    //add shit here
+    //
+    //stupid warning removal
+    x=x;y=y;w=w;h=h;
+}
+
+void drawRunningSprite(float x, float y, int w, int h){
+    //add shit here too
+    //
+    //stupid warning removal
+    x=x;y=y;w=w;h=h;
+}
 
 void buildBackgroundImage(void) {
     //clear the screen
@@ -97,10 +109,12 @@ void centerCamera(int left,int right, int bottom, int top){
 
 
 
+
+
+
 //builds alpha layer data for ppm file, converts black to transparent on sprite
 unsigned char *buildAlphaData(Ppmimage *img)
 {
-    //modified from rainforrest build
     int a,b,c;
     unsigned char *newdata, *ptr;
     unsigned char *data = (unsigned char *)img->data;

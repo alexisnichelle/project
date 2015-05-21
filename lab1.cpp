@@ -3,27 +3,20 @@
 //
 // maybe call it UberDude?
 //
-// WE need to have a talk
-// coding stlye discussion must occur now
-// because spaces > tabs
-//
-//
-#include <iostream>
 #include <cstdlib>
 #include <ctime>
 #include <cstring>
 #include <cmath>
 #include <X11/Xlib.h>
+#include <iostream>
 #include <X11/keysym.h>
 #include <GL/glx.h>
-//#include <GL/glut.h>
 #include "bryanK.h"
 #include "alexisR.h"
 #include "tinaT.h"
 #include "mystruct.h"
 
 #include <GL/gl.h>
-//#include <GL/glut.h>
 extern "C" {
 #include "fonts.h"
 }
@@ -31,7 +24,7 @@ extern "C" {
 #define CHARACTER_HEIGHT 30
 #define WINDOW_WIDTH  800
 #define WINDOW_HEIGHT 600
-#define numbox 30000
+#define numbox 2000
 #define MAX_PROJECTILES 10000
 #define MAX_PARTICLES 1
 #define GRAVITY 1
@@ -44,6 +37,12 @@ GLXContext glc;
 //global values, dont misuse
 static int lives = 3;
 int keys[65536];
+//stats as of now are
+//[0] health
+//[1] movespeed
+//[2] fire rate
+//[3] damage
+int stats[4];
 
 int curbox = 0;
 
@@ -105,6 +104,11 @@ int main(void)
     //declare game object
     Game game;
     game.n=0;
+    //prep base stats
+    stats[0] = 100;//health
+    stats[1] = 6;//movespeed
+    stats[2] = 0;//firerate
+    stats[3] = 0;//damage
 
     //zero out array of all possible key strokes
     for (int i = 0; i < 65536;i++){
@@ -243,7 +247,6 @@ void check_mouse(XEvent *e, Game *game)
     if (e->type == ButtonPress) {
 	if (e->xbutton.button==1) {
 	    //Left button was pressed
-	    //int y = WINDOW_HEIGHT - e->xbutton.y;
 	    if(start){
 		makeParticle(game,200,190); //e->xbutton.x,y );
 		start = false;
@@ -332,11 +335,17 @@ void checkMovement(Game *game)
     Character *p;
     p = &game->character;
 
+    if ((keys[XK_Shift_L]) || (keys[XK_Shift_R]))
+    {
+	stats[1] = 3;
+    }else{
+	stats[1] = 6;
+    }
     if (keys[XK_Right]) {
-	p->velocity.x = 6;
+	p->velocity.x = stats[1];
     }
     if (keys[XK_Left]) {
-	p->velocity.x = -6;
+	p->velocity.x = -stats[1];
     }
     if (keys[XK_Up]) {
 
@@ -422,6 +431,7 @@ void render(Game *game)
     float w, h;
     glClear(GL_COLOR_BUFFER_BIT);
     Vec *c = &game->character.s.center;
+    Vec *vel = &game->character.velocity;
     int left = c->x -(WINDOW_WIDTH/2);
     int right = left + (WINDOW_WIDTH);
     int top = c->y + (WINDOW_HEIGHT/2);
@@ -438,14 +448,14 @@ void render(Game *game)
 	r.center = c->x;
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glEnable(GL_TEXTURE_2D);
-	ggprint16(&r, 16, 0x00ffffff, "Lives: %i",lives);
+	ggprint16(&r, 16, 0x0000ffff, "Lives: %i",lives);
 	glDisable(GL_TEXTURE_2D);
 
 	//temp disable texture to allow for basic color shapes
 	//draw platforms
 	Shape *s;
 	glColor3ub(90,240,90);
-	for (int i=0;i<numbox;i++) {
+	for (int i=0;i<curbox;i++) {
 	    s = &game->box[i];
 	    glPushMatrix();
 	    glTranslatef(s->center.x, s->center.y, s->center.z);
@@ -480,7 +490,17 @@ void render(Game *game)
 	//draw all particles here(character)
 	w = CHARACTER_WIDTH;
 	h = CHARACTER_HEIGHT;
+	//remove the following call after simple sprites are added ffs
 	drawCharacter(c->x,c->y,w,h);
+	//temp if for 
+        if ((keys[XK_Right])||(keys[XK_Left])) {
+	    //moving, use moving sprites
+	    //MOVEMENT SPRITE CALL HERE DOES NOTHING FFS
+	    drawRunningSprite(c->x,c->y,w,h);
+	}else{
+	    //IDLE SPRITE CALL HERE FFS
+	    drawIdleSprite(c->x,c->y,w,h);
+	}
 	//re-enable textures after basic shapes are done
 	glEnable(GL_TEXTURE_2D);
 
@@ -490,6 +510,9 @@ void render(Game *game)
     //click to start
 
     if (dead) {
+	c->y = 250;
+	vel->y = 0;
+	vel->x = 0;
 	//refocus camera on start screen area
 	centerCamera(0,WINDOW_WIDTH,0,WINDOW_HEIGHT);
 
@@ -505,7 +528,7 @@ void render(Game *game)
 	    ggprint16(&r, 16, 0x00ffffff, "You died, Click to respawn!");
 	}
 	if( lives <= 0 ){
-	    ggprint16(&r, 16, 0x00ffffff, "Game Over");
+	    ggprint16(&r, 16, 0x00ff0000, "Game Over");
 	}
     }
     if (start) {
