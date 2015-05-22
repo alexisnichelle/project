@@ -40,7 +40,6 @@ void buildlevel(Shape *box, int &number)
     box[3].center.y = 60;
     number++;
     
-    //second raised platform
     box[4].width = 100;
     box[4].height = 10;
     box[4].center.x = 950;// + 5*65;
@@ -52,5 +51,13 @@ void buildlevel(Shape *box, int &number)
     box[5].center.x = 550;
     box[5].center.y = 280;
     number++;
+    
+    //top box
+    box[6].width = 100;
+    box[6].height = 10;
+    box[6].center.x = 900;
+    box[6].center.y = 400;
+    number++;
+    
 }
 ///

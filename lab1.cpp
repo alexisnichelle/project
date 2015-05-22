@@ -454,7 +454,7 @@ void render(Game *game)
 	//temp disable texture to allow for basic color shapes
 	//draw platforms
 	Shape *s;
-	glColor3ub(90,240,90);
+	glColor3ub(0,0,0);
 	for (int i=0;i<curbox;i++) {
 	    s = &game->box[i];
 	    glPushMatrix();
