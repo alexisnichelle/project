@@ -52,33 +52,33 @@ struct Game {
     Projectile *projectile;
     int n;
     ~Game() {
-	delete [] box;
-	delete [] projectile;
+        delete [] box;
+        delete [] projectile;
     }
     Game() {
-	box = new Shape[numbox];
-	projectile = new Projectile[MAX_PROJECTILES];
-	//initialize projectiles to prevent nulls
-	for (int i = 0; i < MAX_PROJECTILES; i++) {
-	    Projectile p = projectile[i];
-	    p=p;
-	    p.s.center.x = 0;
-	    p.s.center.y = 0;
-	    p.velocity.y = 0;
-	    p.velocity.x = 0;
-	    p.s.width = 0;
-	    p.s.height = 0;
-	}
+        box = new Shape[numbox];
+        projectile = new Projectile[MAX_PROJECTILES];
+        //initialize projectiles to prevent nulls
+        for (int i = 0; i < MAX_PROJECTILES; i++) {
+            Projectile p = projectile[i];
+            p=p;
+            p.s.center.x = 0;
+            p.s.center.y = 0;
+            p.velocity.y = 0;
+            p.velocity.x = 0;
+            p.s.width = 0;
+            p.s.height = 0;
+        }
 
-	//initialize boxes to prevent nulls
-	for (int i = 0; i <numbox; i++) {
-	    box[i].width = 1;
-	    box[i].height = 1;
-	    box[i].center.x = 1;
-	    box[i].center.y = 1;
-	}
-	buildlevel(box,curbox);
-	n=0;
+        //initialize boxes to prevent nulls
+        for (int i = 0; i <numbox; i++) {
+            box[i].width = 1;
+            box[i].height = 1;
+            box[i].center.x = 1;
+            box[i].center.y = 1;
+        }
+        buildlevel(box,curbox);
+        n=0;
     }
 };
 
@@ -112,21 +112,21 @@ int main(void)
 
     //zero out array of all possible key strokes
     for (int i = 0; i < 65536;i++){
-	keys[i] = 0;
+        keys[i] = 0;
     }
 
     //start animation
     while (!done) {
-	while (XPending(dpy)) {
-	    XEvent e;
-	    XNextEvent(dpy, &e);
-	    if (start||dead)
-		check_mouse(&e, &game);
-	    done = check_keys(&e, &game);
-	}
-	movement(&game);
-	render(&game);
-	glXSwapBuffers(dpy, win);
+        while (XPending(dpy)) {
+            XEvent e;
+            XNextEvent(dpy, &e);
+            if (start||dead)
+                check_mouse(&e, &game);
+            done = check_keys(&e, &game);
+        }
+        movement(&game);
+        render(&game);
+        glXSwapBuffers(dpy, win);
     }
     cleanupXWindows();
     return 0;
@@ -153,24 +153,24 @@ void initXWindows(void)
     int w=WINDOW_WIDTH, h=WINDOW_HEIGHT;
     dpy = XOpenDisplay(NULL);
     if (dpy == NULL) {
-	std::cout << "\n\tcannot connect to X server\n" << std::endl;
-	exit(EXIT_FAILURE);
+        std::cout << "\n\tcannot connect to X server\n" << std::endl;
+        exit(EXIT_FAILURE);
     }
     Window root = DefaultRootWindow(dpy);
     XVisualInfo *vi = glXChooseVisual(dpy, 0, att);
     if (vi == NULL) {
-	std::cout << "\n\tno appropriate visual found\n" << std::endl;
-	exit(EXIT_FAILURE);
+        std::cout << "\n\tno appropriate visual found\n" << std::endl;
+        exit(EXIT_FAILURE);
     } 
     Colormap cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
     XSetWindowAttributes swa;
     swa.colormap = cmap;
     swa.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask |
-	ButtonPress | ButtonReleaseMask |
-	PointerMotionMask |
-	StructureNotifyMask | SubstructureNotifyMask;
+        ButtonPress | ButtonReleaseMask |
+        PointerMotionMask |
+        StructureNotifyMask | SubstructureNotifyMask;
     win = XCreateWindow(dpy, root, 0, 0, w, h, 0, vi->depth,
-	    InputOutput, vi->visual, CWColormap | CWEventMask, &swa);
+            InputOutput, vi->visual, CWColormap | CWEventMask, &swa);
     set_title();
     glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
     glXMakeCurrent(dpy, win, glc);
@@ -198,7 +198,7 @@ void init_opengl(void)
 void makeParticle(Game *game, int x, int y) 
 {
     if (game->n >= MAX_PARTICLES)
-	return;
+        return;
     //position of particle
     Character *p = &game->character;
     p->s.center.x = x;
@@ -213,11 +213,10 @@ void makeParticle(Game *game, int x, int y)
 void makeProjectile(Game *game, float x, float y,float xvel, float yvel,int r, int g, int b) 
 {
     if (game->n >= MAX_PROJECTILES) {
-	std::cout <<"shits borked" <<" Make Projectile" <<x<<" "<<y<<std::endl;
-	return;
+        std::cout <<"shits borked" <<" Make Projectile" <<x<<" "<<y<<std::endl;
+        return;
     }
     //position of particle
-    //std::cout <<"makeProjectile()" <<x<<" "<<y<<std::endl;
     Projectile *p = &game->projectile[game->n];
     p->r = r;
     p->g = g;
@@ -242,35 +241,35 @@ void check_mouse(XEvent *e, Game *game)
     static int n = 0;
 
     if (e->type == ButtonRelease) {
-	return;
+        return;
     }
     if (e->type == ButtonPress) {
-	if (e->xbutton.button==1) {
-	    //Left button was pressed
-	    if(start){
-		makeParticle(game,200,190); //e->xbutton.x,y );
-		start = false;
-		mission = true;
-	    }
-	    if(dead){
-		if(lives > 0) {
-		    dead = false;
-		    mission = true;
-		}
-	    }
-	    return;
-	}
-	if (e->xbutton.button==3) {
-	    //Right button was pressed
-	    return;
-	}
+        if (e->xbutton.button==1) {
+            //Left button was pressed
+            if(start){
+                makeParticle(game,200,190); //e->xbutton.x,y );
+                start = false;
+                mission = true;
+            }
+            if(dead){
+                if(lives > 0) {
+                    dead = false;
+                    mission = true;
+                }
+            }
+            return;
+        }
+        if (e->xbutton.button==3) {
+            //Right button was pressed
+            return;
+        }
     }
     //Did the mouse move?
     if (savex != e->xbutton.x || savey != e->xbutton.y) {
-	savex = e->xbutton.x;
-	savey = e->xbutton.y;
-	if (++n < 10)
-	    return;
+        savex = e->xbutton.x;
+        savey = e->xbutton.y;
+        if (++n < 10)
+            return;
     }
 }
 
@@ -282,18 +281,18 @@ int check_keys(XEvent *e, Game *game)
 
     int key = XLookupKeysym(&e->xkey, 0);
     if (e->type == KeyPress) {
-	if (key == XK_Escape) {
-	    return 1;
-	}
-	keys[key] = 1;
-	return 0;
+        if (key == XK_Escape) {
+            return 1;
+        }
+        keys[key] = 1;
+        return 0;
     }
 
     if (e->type == KeyRelease) {
-	keys[key] = 0;
-	return 0;
+        keys[key] = 0;
+        return 0;
     } else {
-	return 0;
+        return 0;
     }
     /*depreciated keychecks, keep for debugging
       Character *p;
@@ -337,24 +336,24 @@ void checkMovement(Game *game)
 
     if ((keys[XK_Shift_L]) || (keys[XK_Shift_R]))
     {
-	stats[1] = 3;
-    }else{
-	stats[1] = 6;
+        stats[1] = 3;
+    } else {
+        stats[1] = 6;
     }
     if (keys[XK_Right]) {
-	p->velocity.x = stats[1];
+        p->velocity.x = stats[1];
     }
     if (keys[XK_Left]) {
-	p->velocity.x = -stats[1];
+        p->velocity.x = -stats[1];
     }
     if (keys[XK_Up]) {
 
-	if (!((p->velocity.y > .1) || (p->velocity.y < -.1))) {
-	    p->velocity.y = 30.0;
-	}
+        if (!((p->velocity.y > .1) || (p->velocity.y < -.1))) {
+            p->velocity.y = 30.0;
+        }
     }
     if (keys[XK_Down]) {
-	makeProjectile(game, (p->s.center.x + p->s.width + 0.1),p->s.center.y,10.0,0.0,200,10,10);
+        makeProjectile(game, (p->s.center.x + p->s.width + 0.1),p->s.center.y,10.0,0.0,200,10,10);
     }
     game = game;
 }
@@ -368,13 +367,13 @@ void movement(Game *game)
     Character *p;
     Projectile *proj;
     if (game->n <= 0)
-	return;
+        return;
 
     p = &game->character;
 
     for (int i = 0; i < game->n;i++) {
-	proj = &game->projectile[i];
-	proj->s.center.x += proj->velocity.x;
+        proj = &game->projectile[i];
+        proj->s.center.x += proj->velocity.x;
     }
     //apply gravity
     p->velocity.y -= 2.1;
@@ -386,19 +385,19 @@ void movement(Game *game)
     Shape *b;//for brevity
     //checks for downwards collision
     for (int i = 0; i < curbox; i++) {
-	b = &game->box[i];
-	if ((p->s.center.x + p->s.width) >= b->center.x - b->width &&
-		(p->s.center.x - p->s.width) <= b->center.x + b->width &&
-		(p->s.center.y - p->s.height) < b->center.y + b->height &&
-		(p->s.center.y + p->s.height) > b->center.y - b->height){ 
-	    if((p->s.center.y < b->center.y) && (p->velocity.y > 0)){//collision upwards??
-		p->velocity.y = -.11;
-		p->s.center.y = b->center.y - b->height -p->s.height - 0.1;
-	    } else {
-		p->s.center.y = b->center.y + b->height + p->s.height + 0.1;
-		p->velocity.y = 0;
-	    }
-	}
+        b = &game->box[i];
+        if ((p->s.center.x + p->s.width) >= b->center.x - b->width &&
+                (p->s.center.x - p->s.width) <= b->center.x + b->width &&
+                (p->s.center.y - p->s.height) < b->center.y + b->height &&
+                (p->s.center.y + p->s.height) > b->center.y - b->height){ 
+            if((p->s.center.y < b->center.y) && (p->velocity.y > 0)){//collision upwards??
+                p->velocity.y = -.11;
+                p->s.center.y = b->center.y - b->height -p->s.height - 0.1;
+            } else {
+                p->s.center.y = b->center.y + b->height + p->s.height + 0.1;
+                p->velocity.y = 0;
+            }
+        }
     }
 
 
@@ -408,21 +407,21 @@ void movement(Game *game)
 
     //if off platform reset to start loc 200,190    
     if (p->s.center.y < -200.0) {
-	p->s.center.x = 200;
-	p->s.center.y = 190;
-	std::cout <<"you died"<<std::endl;
-	dead = true;
-	mission = false;
-	lives--;
+        p->s.center.x = 200;
+        p->s.center.y = 190;
+        std::cout <<"you died"<<std::endl;
+        dead = true;
+        mission = false;
+        lives--;
     }
 
     //movement is called post checkkeys
     //set X velocity to zero unless jumping or a key is depressed
     if (!((p->velocity.y > 0.1) || (p->velocity.y < -.1))) {
-	p->velocity.x /= 1.5;
-	if ((p->velocity.x > -.5) && (p->velocity.x < .5)) {
-	    p->velocity.x = 0;
-	}
+        p->velocity.x /= 1.5;
+        if ((p->velocity.x > -.5) && (p->velocity.x < .5)) {
+            p->velocity.x = 0;
+        }
     }
 }
 
@@ -440,69 +439,69 @@ void render(Game *game)
     if (mission) {
 
 
-	centerCamera(left,right,bottom,top);
-	tileBackground();
-	Rect r;
-	r.bot = 570;
-	r.left = c->x - 300;
-	r.center = c->x;
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glEnable(GL_TEXTURE_2D);
-	ggprint16(&r, 16, 0x0000ffff, "Lives: %i",lives);
-	glDisable(GL_TEXTURE_2D);
+        centerCamera(left,right,bottom,top);
+        tileBackground();
+        Rect r;
+        r.bot = 570;
+        r.left = c->x - 300;
+        r.center = c->x;
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glEnable(GL_TEXTURE_2D);
+        ggprint16(&r, 16, 0x0000ffff, "Lives: %i",lives);
+        glDisable(GL_TEXTURE_2D);
 
-	//temp disable texture to allow for basic color shapes
-	//draw platforms
-	Shape *s;
-	glColor3ub(0,0,0);
-	for (int i=0;i<curbox;i++) {
-	    s = &game->box[i];
-	    glPushMatrix();
-	    glTranslatef(s->center.x, s->center.y, s->center.z);
-	    w = s->width;
-	    h = s->height;
-	    glBegin(GL_QUADS);
-	    glVertex2i(-w,-h);
-	    glVertex2i(-w, h);
-	    glVertex2i( w, h);
-	    glVertex2i( w,-h);
-	    glEnd();
-	    glPopMatrix();
-	}
-	//draw projectiles here
-	Projectile *p;
-	for (int i=0;i<game->n;i++) {
-	    p = &game->projectile[i];
-	    glColor3ub(p->r,p->g,p->b);
-	    glPushMatrix();
-	    glTranslatef(p->s.center.x, p->s.center.y, p->s.center.z);
-	    w = p->s.width;
-	    h = p->s.height;
-	    glBegin(GL_QUADS);
-	    glVertex2i(-w,-h);
-	    glVertex2i(-w, h);
-	    glVertex2i( w, h);
-	    glVertex2i( w,-h);
-	    glEnd();
-	    glPopMatrix();
-	}
+        //temp disable texture to allow for basic color shapes
+        //draw platforms
+        Shape *s;
+        glColor3ub(0,0,0);
+        for (int i=0;i<curbox;i++) {
+            s = &game->box[i];
+            glPushMatrix();
+            glTranslatef(s->center.x, s->center.y, s->center.z);
+            w = s->width;
+            h = s->height;
+            glBegin(GL_QUADS);
+            glVertex2i(-w,-h);
+            glVertex2i(-w, h);
+            glVertex2i( w, h);
+            glVertex2i( w,-h);
+            glEnd();
+            glPopMatrix();
+        }
+        //draw projectiles here
+        Projectile *p;
+        for (int i=0;i<game->n;i++) {
+            p = &game->projectile[i];
+            glColor3ub(p->r,p->g,p->b);
+            glPushMatrix();
+            glTranslatef(p->s.center.x, p->s.center.y, p->s.center.z);
+            w = p->s.width;
+            h = p->s.height;
+            glBegin(GL_QUADS);
+            glVertex2i(-w,-h);
+            glVertex2i(-w, h);
+            glVertex2i( w, h);
+            glVertex2i( w,-h);
+            glEnd();
+            glPopMatrix();
+        }
 
-	//draw all particles here(character)
-	w = CHARACTER_WIDTH;
-	h = CHARACTER_HEIGHT;
-	//remove the following call after simple sprites are added ffs
-	drawCharacter(c->x,c->y,w,h);
-	//temp if for 
+        //draw all particles here(character)
+        w = CHARACTER_WIDTH;
+        h = CHARACTER_HEIGHT;
+        //remove the following call after simple sprites are added ffs
+        drawCharacter(c->x,c->y,w,h);
+        //temp if for 
         if ((keys[XK_Right])||(keys[XK_Left])) {
-	    //moving, use moving sprites
-	    //MOVEMENT SPRITE CALL HERE DOES NOTHING FFS
-	    drawRunningSprite(c->x,c->y,w,h);
-	}else{
-	    //IDLE SPRITE CALL HERE FFS
-	    drawIdleSprite(c->x,c->y,w,h);
-	}
-	//re-enable textures after basic shapes are done
-	glEnable(GL_TEXTURE_2D);
+            //moving, use moving sprites
+            //MOVEMENT SPRITE CALL HERE DOES NOTHING FFS
+            drawRunningSprite(c->x,c->y,w,h);
+        } else {
+            //IDLE SPRITE CALL HERE FFS
+            drawIdleSprite(c->x,c->y,w,h);
+        }
+        //re-enable textures after basic shapes are done
+        glEnable(GL_TEXTURE_2D);
 
 
 
@@ -510,37 +509,39 @@ void render(Game *game)
     //click to start
 
     if (dead) {
-	c->y = 250;
-	vel->y = 0;
-	vel->x = 0;
-	//refocus camera on start screen area
-	centerCamera(0,WINDOW_WIDTH,0,WINDOW_HEIGHT);
+        c->y = 250;
+        vel->y = 0;
+        vel->x = 0;
+        //refocus camera on start screen area
+        centerCamera(0,WINDOW_WIDTH,0,WINDOW_HEIGHT);
 
-	r_texture();
-	Rect r;
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glEnable(GL_TEXTURE_2D);
+            r_texture();
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glEnable(GL_TEXTURE_2D);
 
-	r.bot = 570;
-	r.left = 10;
-	r.center = 0;
-	if( lives > 0 ){
-	    ggprint16(&r, 16, 0x00ffffff, "You died, Click to respawn!");
-	}
-	if( lives <= 0 ){
-	    ggprint16(&r, 16, 0x00ff0000, "Game Over");
-	}
+        Rect r;
+        r.bot = 570;
+        r.left = 10;
+        r.center = 0;
+        if( lives > 0 ) {
+            ggprint16(&r, 16, 0x00ffffff, "You died, Click to respawn!");
+        }
+
+        if( lives <= 0 ) {
+            ggprint16(&r, 16, 0x00ff0000, "Game Over");
+        }
     }
+    
     if (start) {
-	r_texture();
-	Rect r;
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glEnable(GL_TEXTURE_2D);
+        r_texture();
+        Rect r;
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glEnable(GL_TEXTURE_2D);
 
-	r.bot = 570;
-	r.left = 10;
-	r.center = 0;
-	ggprint16(&r, 16, 0x00ffffff, "CLICK TO START!");
+        r.bot = 570;
+        r.left = 10;
+        r.center = 0;
+        ggprint16(&r, 16, 0x00ffffff, "CLICK TO START!");
     }
 }
 

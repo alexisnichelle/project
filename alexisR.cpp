@@ -20,8 +20,11 @@ extern "C" {
 #define numbox 3
 
 Ppmimage *maverickImage=NULL;
+Ppmimage *overImage=NULL;
 GLuint maverickTexture;
+GLuint overTexture;
 int maverick = 1;
+int gameOver = 1;
 
 void texture(void)
 {
@@ -66,3 +69,45 @@ void r_texture()
 
 }
 
+/*
+void game_over()
+{
+    //Clear the screen
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    //glClear(GL_COLOR_BUFFER_BIT);
+    //load the images file into a ppm structure.
+    overImage = ppm6GetImage("./images/game_over.ppm");
+    //create opengl texture elements
+    glGenTextures(1, &overTexture);
+
+    //---------------------------------------------------------------------
+    //game over
+    glBindTexture(GL_TEXTURE_2D, overTexture);
+    
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3,
+            overImage->width, overImage->height,
+            0, GL_RGB, GL_UNSIGNED_BYTE, maverickImage->data);
+
+
+}
+
+void r_gameOver()
+{
+    //texture background
+    glColor3f(1.0, 1.0, 1.0);
+    if (gameOver) {
+        glBindTexture(GL_TEXTURE_2D, overTexture);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
+        glTexCoord2f(0.0f, 0.0f); glVertex2i(0, WINDOW_HEIGHT);
+        glTexCoord2f(1.0f, 0.0f); glVertex2i(WINDOW_WIDTH, WINDOW_HEIGHT);
+        glTexCoord2f(1.0f, 1.0f); glVertex2i(WINDOW_WIDTH, 0);
+        glEnd();
+    }
+
+
+} 
+
+*/
