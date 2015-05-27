@@ -26,6 +26,9 @@ extern "C" {
 #define WINDOW_HEIGHT 600
 Ppmimage *bgImage = NULL;
 GLuint bgTexture;
+GLuint charTexture[3];
+GLuint silhouetteTexture;
+Ppmimage *charImage[3];
 int bg = 1;
 struct timespec timeCharacter;
 struct timespec timeCurrent;
@@ -43,13 +46,15 @@ void timeCopy(struct timespec *destination, struct timespec *source){
 }
 //prototype char draw, rectangle to be replaced with sprite
 void drawCharacter(float x, float y, int w, int h){
-    glPushMatrix();
+    //glPushMatrix();
     double curanim;
     int curanimtime;
     curanim = timeDiff(&timeCharacter, &timeCurrent);
     curanimtime = (int) curanim;
     curanimtime = curanimtime%3;
-    glColor3ub(75 * curanimtime,160,220);
+    glColor3ub(255,255,255);
+    /*
+    glPushMatrix();
     //draw quad as temp to allow for physics implementation
     glBegin(GL_QUADS);
     glVertex2i(x-w,y-h);
@@ -58,6 +63,23 @@ void drawCharacter(float x, float y, int w, int h){
     glVertex2i(x+w,y-h);
     glEnd();
     glPopMatrix();
+    */
+    glPushMatrix();
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_ALPHA_TEST);
+    glBindTexture(GL_TEXTURE_2D, charTexture[curanimtime]);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f,1.0f); glVertex2i(x-w,y-h);
+    glTexCoord2f(0.0f,0.0f); glVertex2i(x-w,y+h);
+    glTexCoord2f(1.0f,0.0f); glVertex2i(x+w,y+h);
+    glTexCoord2f(1.0f,1.0f); glVertex2i(x+w,y-h);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_ALPHA_TEST);
+    //glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+
+    
 }
 
 void drawIdleSprite(float x, float y, int w, int h){
@@ -125,15 +147,6 @@ void centerCamera(int left,int right, int bottom, int top){
 }
 
 
-
-
-
-
-
-
-
-
-//builds alpha layer data for ppm file, converts black to transparent on sprite
 unsigned char *buildAlphaData(Ppmimage *img)
 {
     int a,b,c;
@@ -157,4 +170,28 @@ unsigned char *buildAlphaData(Ppmimage *img)
     return newdata;
 }
 
+void buildCharImage()
+{
 
+    charImage[0] = ppm6GetImage("./images/run1.ppm");
+    charImage[1] = ppm6GetImage("./images/run2.ppm");
+    charImage[2] = ppm6GetImage("./images/run3.ppm");
+    for(int i = 0; i < 3; i++)
+    {
+        glGenTextures(1, &charTexture[i]);
+        glGenTextures(1, &silhouetteTexture);
+        //based on character width and height
+        int w = charImage[i]->width;
+        int h = charImage[i]->height;
+
+        glBindTexture(GL_TEXTURE_2D, charTexture[i]);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, 3 ,w ,h , 0, 
+                GL_RGB, GL_UNSIGNED_BYTE, charImage[i]->data);
+        unsigned char *silhouetteData = buildAlphaData(charImage[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0 ,GL_RGBA, w, h, 0,
+                GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+        free(silhouetteData);
+    }
+}

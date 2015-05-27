@@ -21,8 +21,8 @@
 extern "C" {
 #include "fonts.h"
 }
-#define CHARACTER_WIDTH 15
-#define CHARACTER_HEIGHT 30
+#define CHARACTER_WIDTH 25
+#define CHARACTER_HEIGHT 25
 #define WINDOW_WIDTH  800
 #define WINDOW_HEIGHT 600
 #define numbox 2000
@@ -203,6 +203,8 @@ void init_opengl(void)
 
     texture();
     buildBackgroundImage();
+    buildCharImage();
+
 }
 
 void makeParticle(Game *game, int x, int y) 
