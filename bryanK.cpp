@@ -9,12 +9,16 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <stdio.h>
+#include <string.h>
 #include <cmath>
+#include <time.h>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <GL/glx.h>
 #include <GL/gl.h>
 #include "ppm.h"
+#include "bryanK.h"
 extern "C" {
 #include "fonts.h"
 }
@@ -23,12 +27,29 @@ extern "C" {
 Ppmimage *bgImage = NULL;
 GLuint bgTexture;
 int bg = 1;
+struct timespec timeCharacter;
+struct timespec timeCurrent;
+struct timespec timeStart;
+double oobillion = 1.0/1e9;
+
+double timeDiff(struct timespec *start, struct timespec *end) {
+     return (double) (end->tv_sec - start->tv_sec) +
+         (double) (end->tv_nsec - start->tv_nsec) * oobillion;
+}
 
 
+void timeCopy(struct timespec *destination, struct timespec *source){
+    memcpy(destination, source, sizeof(struct timespec));
+}
 //prototype char draw, rectangle to be replaced with sprite
 void drawCharacter(float x, float y, int w, int h){
     glPushMatrix();
-    glColor3ub(150,160,220);
+    double curanim;
+    int curanimtime;
+    curanim = timeDiff(&timeCharacter, &timeCurrent);
+    curanimtime = (int) curanim;
+    curanimtime = curanimtime%3;
+    glColor3ub(75 * curanimtime,160,220);
     //draw quad as temp to allow for physics implementation
     glBegin(GL_QUADS);
     glVertex2i(x-w,y-h);

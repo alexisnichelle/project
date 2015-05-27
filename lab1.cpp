@@ -7,6 +7,7 @@
 #include <ctime>
 #include <cstring>
 #include <cmath>
+#include <time.h>
 #include <X11/Xlib.h>
 #include <iostream>
 #include <X11/keysym.h>
@@ -35,6 +36,11 @@ Window win;
 GLXContext glc;
 
 //global values, dont misuse
+//
+//time definitions, used across files
+struct timespec timeBullet;
+//returns difference in time from start to end
+
 static int lives = 3;
 int keys[65536];
 //stats as of now are
@@ -109,6 +115,9 @@ int main(void)
     stats[1] = 6;//movespeed
     stats[2] = 0;//firerate
     stats[3] = 0;//damage
+    clock_gettime(CLOCK_REALTIME, &timeCharacter);
+    clock_gettime(CLOCK_REALTIME, &timeStart);
+    clock_gettime(CLOCK_REALTIME, &timeBullet);
 
     //zero out array of all possible key strokes
     for (int i = 0; i < 65536;i++){
@@ -124,6 +133,7 @@ int main(void)
                 check_mouse(&e, &game);
             done = check_keys(&e, &game);
         }
+        clock_gettime(CLOCK_REALTIME, &timeCurrent);
         movement(&game);
         render(&game);
         glXSwapBuffers(dpy, win);
@@ -212,10 +222,12 @@ void makeParticle(Game *game, int x, int y)
 
 void makeProjectile(Game *game, float x, float y,float xvel, float yvel,int r, int g, int b) 
 {
+
     if (game->n >= MAX_PROJECTILES) {
         std::cout <<"shits borked" <<" Make Projectile" <<x<<" "<<y<<std::endl;
         return;
     }
+    if((timeDiff(&timeBullet, &timeCurrent)) >= 2.1){
     //position of particle
     Projectile *p = &game->projectile[game->n];
     p->r = r;
@@ -229,6 +241,8 @@ void makeProjectile(Game *game, float x, float y,float xvel, float yvel,int r, i
     p->velocity.x = xvel;
     game->n++;
     p=p;
+    clock_gettime(CLOCK_REALTIME, &timeBullet);
+    }
 }
 
 void check_mouse(XEvent *e, Game *game)
