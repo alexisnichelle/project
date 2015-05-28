@@ -1,7 +1,7 @@
 //cs335 Spring 2015 Lab-1
 //Uberdude Alpha Build
 //This program executes a game similar in style to megaman
-//
+// 
 //note: PROJECTILE size for character is currently 24w x 12h
 //note: character sprites are currently set to 50x50 pixels
 #include <cstdlib>
@@ -207,7 +207,7 @@ void init_opengl(void)
     buildCharImage();
     buildIdleImage();
     buildProjImage();
-
+    platforms();
 
 }
 
@@ -478,15 +478,21 @@ void render(Game *game)
         for (int i=0;i<curbox;i++) {
             s = &game->box[i];
             glPushMatrix();
-            glTranslatef(s->center.x, s->center.y, s->center.z);
+            glTranslatef(s->center.x, s->center.y, 0);
             w = s->width;
             h = s->height;
-            glBegin(GL_QUADS);
+
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glEnable(GL_TEXTURE_2D);
+            drawPlatforms(w, h);
+            glDisable(GL_TEXTURE_2D);
+    
+            /*glBegin(GL_QUADS);
             glVertex2i(-w,-h);
             glVertex2i(-w, h);
             glVertex2i( w, h);
             glVertex2i( w,-h);
-            glEnd();
+            glEnd(); */
             glPopMatrix();
         }
         //draw projectiles here

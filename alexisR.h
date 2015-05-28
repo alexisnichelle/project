@@ -3,7 +3,7 @@
 
 extern void texture(void); 
 extern void r_texture(void);
-extern void game_over(void);
-extern void r_gameOver(void);
+extern void platforms(void);
+extern void drawPlatforms(float w, float h);
 
 #endif

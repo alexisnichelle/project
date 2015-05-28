@@ -62,6 +62,7 @@ void drawRunningSprite(float x, float y, int w, int h)
     double curanim;
     int curanimtime;
     curanim = timeDiff(&timeCharacter, &timeCurrent);
+    curanim *= 10;
     curanimtime = (int) curanim;
     curanimtime = curanimtime%14;
     glColor3ub(255,255,255);//set color to pure white to avoid blending 

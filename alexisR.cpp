@@ -1,4 +1,4 @@
-//Program: CS335 Lab 6 / Homework 3
+//
 //Author: Alexis Ragus
 //Purpose: Refractoring of CS335 project
 //
@@ -21,10 +21,52 @@ extern "C" {
 
 Ppmimage *maverickImage=NULL;
 Ppmimage *overImage=NULL;
+Ppmimage *levelImage=NULL;
 GLuint maverickTexture;
+GLuint levelTexture;
 GLuint overTexture;
 int maverick = 1;
 int gameOver = 1;
+int level = 1;
+
+
+void platforms(void)
+{
+    //Clear the screen
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    //load the images file into a ppm structure.
+    levelImage = ppm6GetImage("./images/level.ppm");
+    //create opengl texture elements
+    glGenTextures(1, &levelTexture);
+
+    //level
+    glBindTexture(GL_TEXTURE_2D, levelTexture);
+    
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3,
+            levelImage->width, levelImage->height,
+            0, GL_RGB, GL_UNSIGNED_BYTE, levelImage->data);
+
+}
+
+void drawPlatforms(float w, float h)
+{
+
+    glColor3f(1.0, 1.0, 1.0);
+    if (level) {
+        glBindTexture(GL_TEXTURE_2D, levelTexture);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 1.0f); glVertex2i(-w, -h);
+        glTexCoord2f(0.0f, 0.0f); glVertex2i(-w, h);
+        glTexCoord2f(1.0f, 0.0f); glVertex2i(w, h);
+        glTexCoord2f(1.0f, 1.0f); glVertex2i(w, -h);
+        glEnd();
+    }
+
+
+}
+
 
 void texture(void)
 {
@@ -70,44 +112,44 @@ void r_texture()
 }
 
 /*
-void game_over()
-{
-    //Clear the screen
-    glClearColor(1.0, 1.0, 1.0, 1.0);
-    //glClear(GL_COLOR_BUFFER_BIT);
-    //load the images file into a ppm structure.
-    overImage = ppm6GetImage("./images/game_over.ppm");
-    //create opengl texture elements
-    glGenTextures(1, &overTexture);
+   void game_over()
+   {
+//Clear the screen
+glClearColor(1.0, 1.0, 1.0, 1.0);
+//glClear(GL_COLOR_BUFFER_BIT);
+//load the images file into a ppm structure.
+overImage = ppm6GetImage("./images/game_over.ppm");
+//create opengl texture elements
+glGenTextures(1, &overTexture);
 
-    //---------------------------------------------------------------------
-    //game over
-    glBindTexture(GL_TEXTURE_2D, overTexture);
-    
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_2D, 0, 3,
-            overImage->width, overImage->height,
-            0, GL_RGB, GL_UNSIGNED_BYTE, maverickImage->data);
+//---------------------------------------------------------------------
+//game over
+glBindTexture(GL_TEXTURE_2D, overTexture);
+
+glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+glTexImage2D(GL_TEXTURE_2D, 0, 3,
+overImage->width, overImage->height,
+0, GL_RGB, GL_UNSIGNED_BYTE, maverickImage->data);
 
 
 }
 
 void r_gameOver()
 {
-    //texture background
-    glColor3f(1.0, 1.0, 1.0);
-    if (gameOver) {
-        glBindTexture(GL_TEXTURE_2D, overTexture);
-        glBegin(GL_QUADS);
-        glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
-        glTexCoord2f(0.0f, 0.0f); glVertex2i(0, WINDOW_HEIGHT);
-        glTexCoord2f(1.0f, 0.0f); glVertex2i(WINDOW_WIDTH, WINDOW_HEIGHT);
-        glTexCoord2f(1.0f, 1.0f); glVertex2i(WINDOW_WIDTH, 0);
-        glEnd();
-    }
+//texture background
+glColor3f(1.0, 1.0, 1.0);
+if (gameOver) {
+glBindTexture(GL_TEXTURE_2D, overTexture);
+glBegin(GL_QUADS);
+glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
+glTexCoord2f(0.0f, 0.0f); glVertex2i(0, WINDOW_HEIGHT);
+glTexCoord2f(1.0f, 0.0f); glVertex2i(WINDOW_WIDTH, WINDOW_HEIGHT);
+glTexCoord2f(1.0f, 1.0f); glVertex2i(WINDOW_WIDTH, 0);
+glEnd();
+}
 
 
 } 
 
-*/
+ */
