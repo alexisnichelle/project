@@ -14,5 +14,6 @@ extern void tileBackground(void);
 
 extern void buildBackgroundImage(void);
 extern void buildCharImage();
+extern void buildIdleImage();
 
 #endif

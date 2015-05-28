@@ -26,9 +26,11 @@ extern "C" {
 #define WINDOW_HEIGHT 600
 Ppmimage *bgImage = NULL;
 GLuint bgTexture;
-GLuint charTexture[3];
+GLuint charTexture[14];
+GLuint idleTexture[6];
 GLuint silhouetteTexture;
-Ppmimage *charImage[3];
+Ppmimage *charImage[14];
+Ppmimage *idleImage[6];
 int bg = 1;
 struct timespec timeCharacter;
 struct timespec timeCurrent;
@@ -45,13 +47,12 @@ void timeCopy(struct timespec *destination, struct timespec *source){
     memcpy(destination, source, sizeof(struct timespec));
 }
 //prototype char draw, rectangle to be replaced with sprite
-void drawCharacter(float x, float y, int w, int h){
-    //glPushMatrix();
+void drawRunningSprite(float x, float y, int w, int h){
     double curanim;
     int curanimtime;
     curanim = timeDiff(&timeCharacter, &timeCurrent);
     curanimtime = (int) curanim;
-    curanimtime = curanimtime%3;
+    curanimtime = curanimtime%14;
     glColor3ub(255,255,255);
     /*
     glPushMatrix();
@@ -84,12 +85,30 @@ void drawCharacter(float x, float y, int w, int h){
 
 void drawIdleSprite(float x, float y, int w, int h){
     //add shit here
-    //
-    //stupid warning removal
-    x=x;y=y;w=w;h=h;
+    double curanim;
+    int curanimtime;
+    curanim = timeDiff(&timeCharacter, &timeCurrent);
+    curanimtime = (int) curanim;
+    curanimtime = curanimtime%2;
+    glColor3ub(255,255,255);
+    glPushMatrix();
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_ALPHA_TEST);
+    glBindTexture(GL_TEXTURE_2D, idleTexture[curanimtime]);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f,1.0f); glVertex2i(x-w,y-h);
+    glTexCoord2f(0.0f,0.0f); glVertex2i(x-w,y+h);
+    glTexCoord2f(1.0f,0.0f); glVertex2i(x+w,y+h);
+    glTexCoord2f(1.0f,1.0f); glVertex2i(x+w,y-h);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_ALPHA_TEST);
+    //glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+
 }
 
-void drawRunningSprite(float x, float y, int w, int h){
+void drawCharacter(float x, float y, int w, int h){
     //add shit here too
     //
     //stupid warning removal
@@ -176,7 +195,18 @@ void buildCharImage()
     charImage[0] = ppm6GetImage("./images/run1.ppm");
     charImage[1] = ppm6GetImage("./images/run2.ppm");
     charImage[2] = ppm6GetImage("./images/run3.ppm");
-    for(int i = 0; i < 3; i++)
+    charImage[3] = ppm6GetImage("./images/run4.ppm");
+    charImage[4] = ppm6GetImage("./images/run5.ppm");
+    charImage[5] = ppm6GetImage("./images/run6.ppm");
+    charImage[6] = ppm6GetImage("./images/run7.ppm");
+    charImage[7] = ppm6GetImage("./images/run8.ppm");
+    charImage[8] = ppm6GetImage("./images/run9.ppm");
+    charImage[9] = ppm6GetImage("./images/run10.ppm");
+    charImage[10] = ppm6GetImage("./images/run11.ppm");
+    charImage[11] = ppm6GetImage("./images/run12.ppm");
+    charImage[12] = ppm6GetImage("./images/run13.ppm");
+    charImage[13] = ppm6GetImage("./images/run14.ppm");
+    for(int i = 0; i < 14; i++)
     {
         glGenTextures(1, &charTexture[i]);
         glGenTextures(1, &silhouetteTexture);
@@ -190,6 +220,33 @@ void buildCharImage()
         glTexImage2D(GL_TEXTURE_2D, 0, 3 ,w ,h , 0, 
                 GL_RGB, GL_UNSIGNED_BYTE, charImage[i]->data);
         unsigned char *silhouetteData = buildAlphaData(charImage[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0 ,GL_RGBA, w, h, 0,
+                GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+        free(silhouetteData);
+    }
+}
+
+void buildIdleImage()
+{
+
+    idleImage[0] = ppm6GetImage("./images/idle1.ppm");
+    idleImage[1] = ppm6GetImage("./images/idle2.ppm");
+    idleImage[2] = ppm6GetImage("./images/idle3.ppm");
+    idleImage[3] = ppm6GetImage("./images/idle4.ppm");
+    for(int i = 0; i < 4; i++)
+    {
+        glGenTextures(1, &idleTexture[i]);
+        glGenTextures(1, &silhouetteTexture);
+        //based on character width and height
+        int w = idleImage[i]->width;
+        int h = idleImage[i]->height;
+
+        glBindTexture(GL_TEXTURE_2D, idleTexture[i]);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, 3 ,w ,h , 0, 
+                GL_RGB, GL_UNSIGNED_BYTE, idleImage[i]->data);
+        unsigned char *silhouetteData = buildAlphaData(idleImage[i]);
         glTexImage2D(GL_TEXTURE_2D, 0 ,GL_RGBA, w, h, 0,
                 GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
         free(silhouetteData);

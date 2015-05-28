@@ -204,6 +204,7 @@ void init_opengl(void)
     texture();
     buildBackgroundImage();
     buildCharImage();
+    buildIdleImage();
 
 }
 
