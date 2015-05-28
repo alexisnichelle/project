@@ -1,8 +1,9 @@
 //cs335 Spring 2015 Lab-1
+//Uberdude Alpha Build
 //This program executes a game similar in style to megaman
 //
-// maybe call it UberDude?
-//
+//note: PROJECTILE size for character is currently 24w x 12h
+//note: character sprites are currently set to 50x50 pixels
 #include <cstdlib>
 #include <ctime>
 #include <cstring>
@@ -72,8 +73,8 @@ struct Game {
             p.s.center.y = 0;
             p.velocity.y = 0;
             p.velocity.x = 0;
-            p.s.width = 0;
-            p.s.height = 0;
+            p.s.width = 12;
+            p.s.height = 6;
         }
 
         //initialize boxes to prevent nulls
@@ -146,7 +147,7 @@ void set_title(void)
 {
     //Set the window title bar.
     XMapWindow(dpy, win);
-    XStoreName(dpy, win, "335 PROJECT");
+    XStoreName(dpy, win, "Uberdude");
 }
 
 void cleanupXWindows(void) 
@@ -205,6 +206,8 @@ void init_opengl(void)
     buildBackgroundImage();
     buildCharImage();
     buildIdleImage();
+    buildProjImage();
+
 
 }
 
@@ -238,8 +241,8 @@ void makeProjectile(Game *game, float x, float y,float xvel, float yvel,int r, i
     p->b = b;
     p->s.center.x = x;
     p->s.center.y = y;
-    p->s.width = 2;
-    p->s.height = 2;
+    p->s.width = 12;
+    p->s.height = 6;
     p->velocity.y = yvel;
     p->velocity.x = xvel;
     game->n++;
@@ -418,8 +421,9 @@ void movement(Game *game)
     }
 
 
-    //check for off-screen
-    //IF OFF SCREEN = DEAD
+    //check for projectile at character x-pos + 800
+    //if x+800, remove
+    //ADD REMOVE HERE FFS
 
 
     //if off platform reset to start loc 200,190    
@@ -489,18 +493,10 @@ void render(Game *game)
         Projectile *p;
         for (int i=0;i<game->n;i++) {
             p = &game->projectile[i];
-            glColor3ub(p->r,p->g,p->b);
-            glPushMatrix();
-            glTranslatef(p->s.center.x, p->s.center.y, p->s.center.z);
-            w = p->s.width;
-            h = p->s.height;
-            glBegin(GL_QUADS);
-            glVertex2i(-w,-h);
-            glVertex2i(-w, h);
-            glVertex2i( w, h);
-            glVertex2i( w,-h);
-            glEnd();
-            glPopMatrix();
+            //glColor3ub(p->r,p->g,p->b);
+
+
+            drawCharProjSprite(p->s.center.x,p->s.center.y, p->s.width, p->s.height);
         }
 
         //draw all particles here(character)

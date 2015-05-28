@@ -1,7 +1,7 @@
 #ifndef MYSTRUCT_H_
 #define MYSTRUCT_H_
 
-
+//global structures for usage accross .cpp files
 struct Vec {
     float x, y, z;
 };
@@ -16,6 +16,7 @@ struct Character {
     Shape s;
     Vec velocity;
 };
+
 struct Projectile {
     Shape s;
     Vec velocity;

@@ -10,7 +10,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <stdio.h>
-#include <string.h>
+#include <string.h>//seriously? memcpy is in string?
 #include <cmath>
 #include <time.h>
 #include <X11/Xlib.h>
@@ -28,43 +28,45 @@ Ppmimage *bgImage = NULL;
 GLuint bgTexture;
 GLuint charTexture[14];
 GLuint idleTexture[6];
+GLuint cprojTexture[4];
 GLuint silhouetteTexture;
 Ppmimage *charImage[14];
 Ppmimage *idleImage[6];
+Ppmimage *cprojImage[4];
 int bg = 1;
 struct timespec timeCharacter;
 struct timespec timeCurrent;
 struct timespec timeStart;
-double oobillion = 1.0/1e9;
+double oobillion = 1.0/1e9;//for teh nanoseconds
 
-double timeDiff(struct timespec *start, struct timespec *end) {
-     return (double) (end->tv_sec - start->tv_sec) +
-         (double) (end->tv_nsec - start->tv_nsec) * oobillion;
+
+//function that returns the difference in time between start and end
+double timeDiff(struct timespec *start, struct timespec *end)
+{
+    return (double) (end->tv_sec - start->tv_sec) +
+        (double) (end->tv_nsec - start->tv_nsec) * oobillion;
 }
 
 
-void timeCopy(struct timespec *destination, struct timespec *source){
+//functionn to copy time structures over
+void timeCopy(struct timespec *destination, struct timespec *source)
+{
     memcpy(destination, source, sizeof(struct timespec));
 }
-//prototype char draw, rectangle to be replaced with sprite
-void drawRunningSprite(float x, float y, int w, int h){
+
+
+//draws sprite of character running, uses alpha blengind to make background of sprite
+//transparent
+void drawRunningSprite(float x, float y, int w, int h)
+{
     double curanim;
     int curanimtime;
     curanim = timeDiff(&timeCharacter, &timeCurrent);
     curanimtime = (int) curanim;
     curanimtime = curanimtime%14;
-    glColor3ub(255,255,255);
-    /*
-    glPushMatrix();
-    //draw quad as temp to allow for physics implementation
-    glBegin(GL_QUADS);
-    glVertex2i(x-w,y-h);
-    glVertex2i(x-w,y+h);
-    glVertex2i(x+w,y+h);
-    glVertex2i(x+w,y-h);
-    glEnd();
-    glPopMatrix();
-    */
+    glColor3ub(255,255,255);//set color to pure white to avoid blending 
+    
+    //draw a recangle at character's position using run sprite
     glPushMatrix();
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_ALPHA_TEST);
@@ -76,21 +78,57 @@ void drawRunningSprite(float x, float y, int w, int h){
     glTexCoord2f(1.0f,1.0f); glVertex2i(x+w,y-h);
     glEnd();
     glBindTexture(GL_TEXTURE_2D, 0);
+    //disable alpha blending to avoid conflict on other draw functions
     glDisable(GL_ALPHA_TEST);
     //glDisable(GL_TEXTURE_2D);
     glPopMatrix();
 
-    
+
 }
 
-void drawIdleSprite(float x, float y, int w, int h){
-    //add shit here
+
+//make animated character projectiles
+void drawCharProjSprite(float x, float y, int w, int h)
+{
+    double curanim;
+    int curanimtime;
+    curanim = timeDiff(&timeCharacter, &timeCurrent);
+    curanimtime = (int) curanim;
+    curanimtime = curanimtime%4;
+    glColor3ub(255,255,255);//set color to pure white to avoid blending 
+    
+    //draw a recangle at character's position using run sprite
+    glPushMatrix();
+    //glTranslatef(x,y,0);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_ALPHA_TEST);
+    glBindTexture(GL_TEXTURE_2D, cprojTexture[curanimtime]);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f,1.0f); glVertex2i(x-w,y-h);
+    glTexCoord2f(0.0f,0.0f); glVertex2i(x-w,y+h);
+    glTexCoord2f(1.0f,0.0f); glVertex2i(x+w,y+h);
+    glTexCoord2f(1.0f,1.0f); glVertex2i(x+w,y-h);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    //disable alpha blending to avoid conflict on other draw functions
+    glDisable(GL_ALPHA_TEST);
+    //glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+}
+
+
+//function that draws an animated idle sprite at characters location, uses
+//alpha blending for background transparency
+void drawIdleSprite(float x, float y, int w, int h)
+{
     double curanim;
     int curanimtime;
     curanim = timeDiff(&timeCharacter, &timeCurrent);
     curanimtime = (int) curanim;
     curanimtime = curanimtime%2;
-    glColor3ub(255,255,255);
+    glColor3ub(255,255,255);//set color to pure white to avoid blending
+    
+    //draw a recangle at character's position using idle sprite
     glPushMatrix();
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_ALPHA_TEST);
@@ -102,35 +140,40 @@ void drawIdleSprite(float x, float y, int w, int h){
     glTexCoord2f(1.0f,1.0f); glVertex2i(x+w,y-h);
     glEnd();
     glBindTexture(GL_TEXTURE_2D, 0);
+    //disable alpha blending to avoid conflict on other draw functions
     glDisable(GL_ALPHA_TEST);
     //glDisable(GL_TEXTURE_2D);
     glPopMatrix();
 
 }
 
+
+//testing function, used when prototyping new draw methods to avoid conflict
 void drawCharacter(float x, float y, int w, int h){
-    //add shit here too
-    //
     //stupid warning removal
     x=x;y=y;w=w;h=h;
 }
 
-void buildBackgroundImage(void) {
+
+//function that loads a tileable background image from a file and prepares it to use
+//as a background texture
+void buildBackgroundImage(void) 
+{
     //clear the screen
     glClearColor(1.0,1.0,1.0,1.0);
-    bgImage = ppm6GetImage("./images/bgimage.ppm");
+    bgImage = ppm6GetImage("./images/bgimage.ppm");//load a TILEABLE backgroun image
     glGenTextures(1, &bgTexture);
-
     glBindTexture(GL_TEXTURE_2D, bgTexture);
-
-
     glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
     glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D,0,3,bgImage->width,bgImage->height,0,
             GL_RGB,GL_UNSIGNED_BYTE,bgImage->data);
 }
 
-void tileBackground(void) {
+
+//function that generates a background using a tileable image
+void tileBackground(void) 
+{
     glEnable(GL_TEXTURE_2D);
     glColor3f(1.0,1.0,1.0);
     if(bg){
@@ -148,24 +191,31 @@ void tileBackground(void) {
             }
         }
     }
+    //disable texture after finished to prevent conflict with other draw functions
     glDisable(GL_TEXTURE_2D);
 }
 
-void centerCamera(int left,int right, int bottom, int top){
+
+//function that changes the clipping plane of the orthogonal projection to give
+//a sense of a camera following the main character
+void centerCamera(int left,int right, int bottom, int top)
+{
     //clear scrub warnings
-    top = top; bottom = bottom;
+    top = top; 
+    bottom = bottom;
     //end warning clear
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     //glViewport(left,bottom,WINDOW_WIDTH,WINDOW_HEIGHT);
     //gluOrtho2D(left, right, bottom, top);
     glOrtho(left, right, 0, WINDOW_HEIGHT,-1,1);
-
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
 
 
+//function that adds an alpha layer to loaded ppm images
+//turns pure black pixels to transparent alpha values
 unsigned char *buildAlphaData(Ppmimage *img)
 {
     int a,b,c;
@@ -180,7 +230,6 @@ unsigned char *buildAlphaData(Ppmimage *img)
         *(ptr+0) = a;
         *(ptr+1) = b;
         *(ptr+2) = c;
-
         //set alpha to 1 (white) unless all three values are 0
         *(ptr+3) = (a|b|c);
         ptr+= 4;
@@ -189,9 +238,11 @@ unsigned char *buildAlphaData(Ppmimage *img)
     return newdata;
 }
 
+
+//function that loads in running sprite images for character from files,
+//converts them into a texture array for usage during draw calls
 void buildCharImage()
 {
-
     charImage[0] = ppm6GetImage("./images/run1.ppm");
     charImage[1] = ppm6GetImage("./images/run2.ppm");
     charImage[2] = ppm6GetImage("./images/run3.ppm");
@@ -211,9 +262,9 @@ void buildCharImage()
         glGenTextures(1, &charTexture[i]);
         glGenTextures(1, &silhouetteTexture);
         //based on character width and height
+        //ensure images are correct size
         int w = charImage[i]->width;
         int h = charImage[i]->height;
-
         glBindTexture(GL_TEXTURE_2D, charTexture[i]);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
@@ -226,9 +277,11 @@ void buildCharImage()
     }
 }
 
+
+//function that loads in idle animation sprite images for character from files,
+//converts them into a texture array for usage during draw calls
 void buildIdleImage()
 {
-
     idleImage[0] = ppm6GetImage("./images/idle1.ppm");
     idleImage[1] = ppm6GetImage("./images/idle2.ppm");
     idleImage[2] = ppm6GetImage("./images/idle3.ppm");
@@ -238,9 +291,9 @@ void buildIdleImage()
         glGenTextures(1, &idleTexture[i]);
         glGenTextures(1, &silhouetteTexture);
         //based on character width and height
+        //make sure images are of correct size
         int w = idleImage[i]->width;
         int h = idleImage[i]->height;
-
         glBindTexture(GL_TEXTURE_2D, idleTexture[i]);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
@@ -251,4 +304,36 @@ void buildIdleImage()
                 GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
         free(silhouetteData);
     }
+}
+
+
+//function that loads in images for animated projectilesfrom files
+//then converts them into a texture array for usage in draw calls
+void buildProjImage()
+{
+    //load character projectiles here
+    cprojImage[0] = ppm6GetImage("./images/cbullet1.ppm");
+    cprojImage[1] = ppm6GetImage("./images/cbullet2.ppm");
+    cprojImage[2] = ppm6GetImage("./images/cbullet3.ppm");
+    cprojImage[3] = ppm6GetImage("./images/cbullet4.ppm");
+    for(int i = 0; i < 4; i++)
+    {
+        glGenTextures(1, &cprojTexture[i]);
+        glGenTextures(1, &silhouetteTexture);
+        //based on character width and height
+        //make sure images are of correct size
+        int w = cprojImage[i]->width;
+        int h = cprojImage[i]->height;
+        glBindTexture(GL_TEXTURE_2D, cprojTexture[i]);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, 3 ,w ,h , 0, 
+                GL_RGB, GL_UNSIGNED_BYTE, cprojImage[i]->data);
+        unsigned char *silhouetteData = buildAlphaData(cprojImage[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0 ,GL_RGBA, w, h, 0,
+                GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+        free(silhouetteData);
+    }
+
+
 }
