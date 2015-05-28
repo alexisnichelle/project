@@ -64,72 +64,114 @@ void buildlevel(Shape *box, int &number)
     box[7].center.x = 1300;
     box[7].center.y = 40;
     number++;
-    
+    //start-stairs
     box[8].width = 100;
     box[8].height = 10;
     box[8].center.x = 1500;
-    box[8].center.y = 250;
+    box[8].center.y = 60;
     number++;
     
     box[9].width = 100;
     box[9].height = 10;
     box[9].center.x = 1500;
-    box[9].center.y = 150;
+    box[9].center.y = 10;
     number++;
     
     box[10].width = 100;
     box[10].height = 10;
     box[10].center.x = 1500;
-    box[10].center.y = 140;
+    box[10].center.y = 80;
     number++;
-    
+    //end-stairs
     box[11].width = 100;
     box[11].height = 10;
-    box[11].center.x = 1500;
-    box[11].center.y = 130;
+    box[11].center.x = 1800;
+    box[11].center.y = 300;
     number++;
     
     box[12].width = 100;
     box[12].height = 10;
-    box[12].center.x = 1500;
-    box[12].center.y = 120;
+    box[12].center.x = 1800;
+    box[12].center.y = 400;
     number++;
     
     box[13].width = 100;
     box[13].height = 10;
-    box[13].center.x = 1500;
-    box[13].center.y = 110;
+    box[13].center.x = 1800;
+    box[13].center.y = 420;
     number++;
     
     box[14].width = 100;
     box[14].height = 10;
-    box[14].center.x = 1500;
-    box[14].center.y = 100;
+    box[14].center.x = 1800;
+    box[14].center.y = 440;
     number++;
     
     box[15].width = 100;
     box[15].height = 10;
-    box[15].center.x = 1500;
-    box[15].center.y = 90;
+    box[15].center.x = 1800;
+    box[15].center.y = 460;
     number++;
 
     box[16].width = 100;
     box[16].height = 10;
-    box[16].center.x = 1500;
-    box[16].center.y = 80;
+    box[16].center.x = 1800;
+    box[16].center.y = 480;
     number++;
     
     box[17].width = 100;
     box[17].height = 10;
-    box[17].center.x = 1500;
-    box[17].center.y = 70;
+    box[17].center.x = 1800;
+    box[17].center.y = 500;
     number++;
     
     box[18].width = 100;
     box[18].height = 10;
-    box[18].center.x = 1500;
-    box[18].center.y = 60;
+    box[18].center.x = 1800;
+    box[18].center.y = 520;
     number++;
-    
+   
+    box[19].width = 100;
+    box[19].height = 10;
+    box[19].center.x = 1800;
+    box[19].center.y = 540;
+    number++;
+   
+    box[20].width = 100;
+    box[20].height = 10;
+    box[20].center.x = 2000;
+    box[20].center.y = 300;
+    number++;
+   
+    box[21].width = 100;
+    box[21].height = 10;
+    box[21].center.x = 2200;
+    box[21].center.y = 300;
+    number++;
+   
+    box[22].width = 100;
+    box[22].height = 10;
+    box[22].center.x = 2800;
+    box[22].center.y = 200;
+    number++;
+   
+    box[23].width = 100;
+    box[23].height = 10;
+    box[23].center.x = 2600;
+    box[23].center.y = 100;
+    number++;
+   
+    box[24].width = 100;
+    box[24].height = 10;
+    box[24].center.x = 2600;
+    box[24].center.y = 440;
+    number++;
+   
+    box[25].width = 100;
+    box[25].height = 10;
+    box[25].center.x = 2600;
+    box[25].center.y = 540;
+    number++;
+   
 }
 ///
