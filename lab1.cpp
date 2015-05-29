@@ -9,6 +9,7 @@
 #include <cstring>
 #include <cmath>
 #include <time.h>
+#include <string.h>
 #include <X11/Xlib.h>
 #include <iostream>
 #include <X11/keysym.h>
@@ -52,10 +53,11 @@ int keys[65536];
 int stats[4];
 
 int curbox = 0;
-
+bool liveboss = true;
 struct Game {
     Shape *box;
     Character character;
+    Boss boss;//to be used for the main boss at end of level
     Projectile *projectile;
     int n;
     ~Game() {
@@ -76,6 +78,16 @@ struct Game {
             p.s.width = 12;
             p.s.height = 6;
         }
+
+        //basic positioning for ze boss to be changed to end of level
+        boss.s.center.x = 1000;
+        boss.s.center.y =110;
+        boss.velocity.x = 0;
+        boss.velocity.y = 0;
+        boss.s.width = 50;
+        boss.s.height = 50;
+        boss.health = 100;
+
 
         //initialize boxes to prevent nulls
         for (int i = 0; i <numbox; i++) {
@@ -114,7 +126,7 @@ int main(void)
     //prep base stats
     stats[0] = 100;//health
     stats[1] = 6;//movespeed
-    stats[2] = 0;//firerate
+    stats[2] = 0.7;//firerate
     stats[3] = 0;//damage
     clock_gettime(CLOCK_REALTIME, &timeCharacter);
     clock_gettime(CLOCK_REALTIME, &timeStart);
@@ -233,21 +245,30 @@ void makeProjectile(Game *game, float x, float y,float xvel, float yvel,int r, i
         std::cout <<"shits borked" <<" Make Projectile" <<x<<" "<<y<<std::endl;
         return;
     }
-    if((timeDiff(&timeBullet, &timeCurrent)) >= 2.1){
-    //position of particle
-    Projectile *p = &game->projectile[game->n];
-    p->r = r;
-    p->g = g;
-    p->b = b;
-    p->s.center.x = x;
-    p->s.center.y = y;
-    p->s.width = 12;
-    p->s.height = 6;
-    p->velocity.y = yvel;
-    p->velocity.x = xvel;
-    game->n++;
-    p=p;
-    clock_gettime(CLOCK_REALTIME, &timeBullet);
+    if((timeDiff(&timeBullet, &timeCurrent)) >= stats[2]){//stats[2] ==firerate
+        //position of particle
+        Projectile *p = &game->projectile[game->n];
+        p->r = r;
+        p->g = g;
+        p->b = b;
+        p->s.center.x = x;
+        p->s.center.y = y;
+        p->s.width = 12;
+        p->s.height = 6;
+        p->velocity.y = yvel;
+        p->velocity.x = xvel;
+        game->n++;
+        p=p;
+        clock_gettime(CLOCK_REALTIME, &timeBullet);
+    }
+}
+
+void delete_projectile(int proj, Game *game){
+    if(proj < game->n){
+        memcpy(&game->projectile[proj], &game->projectile[game->n -1],
+                sizeof(struct Projectile));
+        game->n--;
+
     }
 }
 
@@ -373,7 +394,7 @@ void checkMovement(Game *game)
         }
     }
     if (keys[XK_Down]) {
-        makeProjectile(game, (p->s.center.x + p->s.width + 0.1),p->s.center.y,10.0,0.0,200,10,10);
+        makeProjectile(game, (p->s.center.x + p->s.width + 12.1),p->s.center.y,10.0,0.0,200,10,10);
     }
     game = game;
 }
@@ -391,9 +412,44 @@ void movement(Game *game)
 
     p = &game->character;
 
+    //projectile physics
     for (int i = 0; i < game->n;i++) {
         proj = &game->projectile[i];
         proj->s.center.x += proj->velocity.x;
+        Shape *boss = &game->boss.s;
+        //check for boss collision
+        
+        if((stats[0] > 0)&&//xcheck
+                    (((proj->s.center.x + proj->s.width) > (p->s.center.x - p->s.width) &&
+                    (proj->s.center.x - proj->s.width) < (p->s.center.x + p->s.width)) 
+                    &&//ycheck
+                    (((proj->s.center.y + proj->s.height) > (p->s.center.y - p->s.height)) &&
+                    ((proj->s.center.y - proj->s.height) < (p->s.center.y + p->s.height)))))
+        {
+            stats[0] -= 10;//DAMAGE
+            if(stats[0]){
+                //kill yourself
+                //do death anim
+            }
+            delete_projectile(i,game);
+        } else if(liveboss&&//xcheck
+                    (((proj->s.center.x + proj->s.width) > (boss->center.x - boss->width) &&
+                    (proj->s.center.x - proj->s.width) < (boss->center.x + boss->width)) 
+                    &&//ycheck
+                    (((proj->s.center.y + proj->s.height) > (boss->center.y - boss->height)) &&
+                    ((proj->s.center.y - proj->s.height) < (boss->center.y + boss->height))))){
+            game->boss.health -= 10;//DAMAGE
+            if(game->boss.health <=0){
+                //kill it
+                liveboss = false;
+                //do death anim
+            }
+            delete_projectile(i,game);
+        }//delete if projectile went too far
+        else if(proj->s.center.x > (p->s.center.x + 400)){
+            delete_projectile(i,game);
+        }
+
     }
     //apply gravity
     p->velocity.y -= 2.1;
@@ -419,13 +475,6 @@ void movement(Game *game)
             }
         }
     }
-
-
-    //check for projectile at character x-pos + 800
-    //if x+800, remove
-    //ADD REMOVE HERE FFS
-
-
     //if off platform reset to start loc 200,190    
     if (p->s.center.y < -200.0) {
         p->s.center.x = 200;
@@ -486,15 +535,35 @@ void render(Game *game)
             glEnable(GL_TEXTURE_2D);
             drawPlatforms(w, h);
             glDisable(GL_TEXTURE_2D);
-    
+
             /*glBegin(GL_QUADS);
-            glVertex2i(-w,-h);
-            glVertex2i(-w, h);
-            glVertex2i( w, h);
-            glVertex2i( w,-h);
-            glEnd(); */
+              glVertex2i(-w,-h);
+              glVertex2i(-w, h);
+              glVertex2i( w, h);
+              glVertex2i( w,-h);
+              glEnd(); */
             glPopMatrix();
         }
+        //temp draw calls for BOSS
+
+        if(liveboss){
+            s= &game->boss.s;
+            w = s->width;
+            h = s->height;
+
+            drawBossIdleSprite(s->center.x,s->center.y, w, h);/*
+            glPushMatrix();
+            glTranslatef(s->center.x, s->center.y, 0);
+            glBegin(GL_QUADS);
+            glVertex2i(-w,-h);
+            glVertex2i(-w,h);
+            glVertex2i(w,h);
+            glVertex2i(w,-h);
+            glEnd();
+            glPopMatrix();*/
+        }
+
+
         //draw projectiles here
         Projectile *p;
         for (int i=0;i<game->n;i++) {
@@ -534,9 +603,9 @@ void render(Game *game)
         //refocus camera on start screen area
         centerCamera(0,WINDOW_WIDTH,0,WINDOW_HEIGHT);
 
-            r_texture();
-            glBindTexture(GL_TEXTURE_2D, 0);
-            glEnable(GL_TEXTURE_2D);
+        r_texture();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glEnable(GL_TEXTURE_2D);
 
         Rect r;
         r.bot = 570;
@@ -550,7 +619,7 @@ void render(Game *game)
             ggprint16(&r, 16, 0x00ff0000, "Game Over");
         }
     }
-    
+
     if (start) {
         r_texture();
         Rect r;

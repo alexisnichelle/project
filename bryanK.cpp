@@ -26,11 +26,11 @@ extern "C" {
 #define WINDOW_HEIGHT 600
 Ppmimage *bgImage = NULL;
 GLuint bgTexture;
-GLuint charTexture[14];
+GLuint charTexture[16];
 GLuint idleTexture[6];
 GLuint cprojTexture[4];
 GLuint silhouetteTexture;
-Ppmimage *charImage[14];
+Ppmimage *charImage[16];
 Ppmimage *idleImage[6];
 Ppmimage *cprojImage[4];
 int bg = 1;
@@ -89,7 +89,37 @@ void drawRunningSprite(float x, float y, int w, int h)
 
 
 //make animated character projectiles
+void drawBossIdleSprite(float x, float y, int w, int h)
+{
+    double curanim;
+    int curanimtime;
+    curanim = timeDiff(&timeCharacter, &timeCurrent);
+    curanimtime = (int) curanim;
+    curanimtime = curanimtime%2;
+    curanimtime += 14;
+    glColor3ub(255,255,255);//set color to pure white to avoid blending 
+    
+    //draw a recangle at character's position using run sprite
+    glPushMatrix();
+    //glTranslatef(x,y,0);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_ALPHA_TEST);
+    glBindTexture(GL_TEXTURE_2D, charTexture[curanimtime]);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f,1.0f); glVertex2i(x-w,y-h);
+    glTexCoord2f(0.0f,0.0f); glVertex2i(x-w,y+h);
+    glTexCoord2f(1.0f,0.0f); glVertex2i(x+w,y+h);
+    glTexCoord2f(1.0f,1.0f); glVertex2i(x+w,y-h);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    //disable alpha blending to avoid conflict on other draw functions
+    glDisable(GL_ALPHA_TEST);
+    //glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+}
+
 void drawCharProjSprite(float x, float y, int w, int h)
+//funtion that draws boss idle sprites located at pos 14 and 15 of charImage
 {
     double curanim;
     int curanimtime;
@@ -116,6 +146,8 @@ void drawCharProjSprite(float x, float y, int w, int h)
     //glDisable(GL_TEXTURE_2D);
     glPopMatrix();
 }
+
+
 
 
 //function that draws an animated idle sprite at characters location, uses
@@ -258,7 +290,10 @@ void buildCharImage()
     charImage[11] = ppm6GetImage("./images/run12.ppm");
     charImage[12] = ppm6GetImage("./images/run13.ppm");
     charImage[13] = ppm6GetImage("./images/run14.ppm");
-    for(int i = 0; i < 14; i++)
+    //boss sprite
+    charImage[14] = ppm6GetImage("./images/boss1.ppm");
+    charImage[15] = ppm6GetImage("./images/boss2.ppm");
+    for(int i = 0; i < 16; i++)
     {
         glGenTextures(1, &charTexture[i]);
         glGenTextures(1, &silhouetteTexture);

@@ -17,6 +17,12 @@ struct Character {
     Vec velocity;
 };
 
+struct Boss {
+    Shape s;
+    Vec velocity;
+    int health;
+};
+
 struct Projectile {
     Shape s;
     Vec velocity;
