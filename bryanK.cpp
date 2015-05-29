@@ -57,7 +57,7 @@ void timeCopy(struct timespec *destination, struct timespec *source)
 
 //draws sprite of character running, uses alpha blengind to make background of sprite
 //transparent
-void drawRunningSprite(float x, float y, int w, int h)
+void drawRunningSprite(float x, float y, int w, int h, bool left)
 {
     double curanim;
     int curanimtime;
@@ -72,12 +72,29 @@ void drawRunningSprite(float x, float y, int w, int h)
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_ALPHA_TEST);
     glBindTexture(GL_TEXTURE_2D, charTexture[curanimtime]);
+    if(left){
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0f,1.0f); glVertex2i(x-w,y-h);
-    glTexCoord2f(0.0f,0.0f); glVertex2i(x-w,y+h);
-    glTexCoord2f(1.0f,0.0f); glVertex2i(x+w,y+h);
-    glTexCoord2f(1.0f,1.0f); glVertex2i(x+w,y-h);
+    glTexCoord2f(0.0f,1.0f); 
+    glVertex2i(x+w,y-h);
+    glTexCoord2f(0.0f,0.0f); 
+    glVertex2i(x+w,y+h);
+    glTexCoord2f(1.0f,0.0f); 
+    glVertex2i(x-w,y+h);
+    glTexCoord2f(1.0f,1.0f); 
+    glVertex2i(x-w,y-h);
     glEnd();
+    }else{
+        glBegin(GL_QUADS);
+    glTexCoord2f(0.0f,1.0f); 
+    glVertex2i(x-w,y-h);
+    glTexCoord2f(0.0f,0.0f); 
+    glVertex2i(x-w,y+h);
+    glTexCoord2f(1.0f,0.0f); 
+    glVertex2i(x+w,y+h);
+    glTexCoord2f(1.0f,1.0f); 
+    glVertex2i(x+w,y-h);
+    glEnd();
+    }
     glBindTexture(GL_TEXTURE_2D, 0);
     //disable alpha blending to avoid conflict on other draw functions
     glDisable(GL_ALPHA_TEST);

@@ -396,6 +396,7 @@ void checkMovement(Game *game)
         }
     }
     if (keys[XK_Down]) {
+        //game,x,y,xvel,yvel
         makeProjectile(game, (p->s.center.x + p->s.width + 12.1),p->s.center.y,10.0,0.0,200,10,10);
     }
     game = game;
@@ -585,7 +586,13 @@ void render(Game *game)
         if ((keys[XK_Right])||(keys[XK_Left])) {
             //moving, use moving sprites
             //MOVEMENT SPRITE CALL HERE DOES NOTHING FFS
-            drawRunningSprite(c->x,c->y,w,h);
+            if((keys[XK_Right])){
+            drawRunningSprite(c->x,c->y,w,h,false);
+            }
+            else{
+            drawRunningSprite(c->x,c->y,w,h,true);
+            }
+
         } else {
             //IDLE SPRITE CALL HERE FFS
             drawIdleSprite(c->x,c->y,w,h);
