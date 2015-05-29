@@ -74,7 +74,7 @@ void buildlevel(Shape *box, int &number)
     box[9].width = 100;
     box[9].height = 10;
     box[9].center.x = 1500;
-    box[9].center.y = 10;
+    box[9].center.y = 40;
     number++;
     
     box[10].width = 100;
@@ -88,64 +88,64 @@ void buildlevel(Shape *box, int &number)
     box[11].center.x = 1800;
     box[11].center.y = 300;
     number++;
-    
+    //start-nonsense
     box[12].width = 100;
     box[12].height = 10;
-    box[12].center.x = 1800;
-    box[12].center.y = 400;
+    box[12].center.x = 1790;
+    box[12].center.y = 900;
     number++;
     
     box[13].width = 100;
     box[13].height = 10;
-    box[13].center.x = 1800;
-    box[13].center.y = 420;
+    box[13].center.x = 1810;
+    box[13].center.y = 920;
     number++;
     
     box[14].width = 100;
     box[14].height = 10;
-    box[14].center.x = 1800;
-    box[14].center.y = 440;
+    box[14].center.x = 1820;
+    box[14].center.y = 940;
     number++;
     
     box[15].width = 100;
     box[15].height = 10;
-    box[15].center.x = 1800;
-    box[15].center.y = 460;
+    box[15].center.x = 1830;
+    box[15].center.y = 960;
     number++;
 
     box[16].width = 100;
     box[16].height = 10;
-    box[16].center.x = 1800;
-    box[16].center.y = 480;
+    box[16].center.x = 1840;
+    box[16].center.y = 980;
     number++;
     
     box[17].width = 100;
     box[17].height = 10;
-    box[17].center.x = 1800;
-    box[17].center.y = 500;
+    box[17].center.x = 1850;
+    box[17].center.y = 900;
     number++;
     
     box[18].width = 100;
     box[18].height = 10;
-    box[18].center.x = 1800;
-    box[18].center.y = 520;
+    box[18].center.x = 1860;
+    box[18].center.y = 920;
     number++;
    
     box[19].width = 100;
     box[19].height = 10;
-    box[19].center.x = 1800;
-    box[19].center.y = 540;
+    box[19].center.x = 1870;
+    box[19].center.y = 940;
     number++;
-   
+  //end-nonsense 
     box[20].width = 100;
     box[20].height = 10;
-    box[20].center.x = 2000;
-    box[20].center.y = 300;
+    box[20].center.x = 1900;
+    box[20].center.y = 280;
     number++;
    
     box[21].width = 100;
     box[21].height = 10;
-    box[21].center.x = 2200;
+    box[21].center.x = 2000;
     box[21].center.y = 300;
     number++;
    
@@ -169,8 +169,14 @@ void buildlevel(Shape *box, int &number)
    
     box[25].width = 100;
     box[25].height = 10;
-    box[25].center.x = 2600;
-    box[25].center.y = 540;
+    box[25].center.x = 2030;
+    box[25].center.y = 150;
+    number++;
+   
+    box[26].width = 100;
+    box[26].height = 10;
+    box[26].center.x = 2300;
+    box[26].center.y = 400;
     number++;
    
 }
