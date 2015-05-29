@@ -17,6 +17,7 @@
 #include "bryanK.h"
 #include "alexisR.h"
 #include "tinaT.h"
+#include "frankC.h"
 #include "mystruct.h"
 
 #include <GL/gl.h>
@@ -97,6 +98,7 @@ struct Game {
             box[i].center.y = 1;
         }
         buildlevel(box,curbox);
+	level(box,curbox);
         n=0;
     }
 };
