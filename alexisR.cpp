@@ -39,6 +39,16 @@ int gameOver = 1;
 int level = 1;
 
 
+void text(void)
+{ 
+    Rect r;
+    r.bot = 260;
+    r.left = 325;
+    r.center = 0;
+    ggprint13(&r,36,0x00cdc2c2,"C l i c k   t o   S t a r t !");
+    
+}
+
 void platforms(void)
 {
     //Clear the screen
@@ -72,7 +82,6 @@ void drawPlatforms(float w, float h)
         glTexCoord2f(1.0f, 1.0f); glVertex2i(w, -h);
         glEnd();
     }
-
 
 }
 
@@ -119,7 +128,7 @@ void r_texture()
 
 void createsounds(void)
 {
-    #ifdef USE_SOUND
+#ifdef USE_SOUND
     //FMOD_RESULT result;
     if (fmod_init()) {
         printf("ERROR - createsounds\n\n");
@@ -129,35 +138,34 @@ void createsounds(void)
         printf("ERROR - createsounds\n\n");
         return;
     }
-    //if (fmod_createsound("./sounds/game_over.mp3", 1)) {
-    //    printf("ERROR - fmod_createsound()\n\n");
-    //    return;
-    //}
+    if (fmod_createsound((const char *)"./sounds/game_over.mp3", 1)) {
+        printf("ERROR - fmod_createsound()\n\n");
+        return;
+    }
     fmod_setmode(0,FMOD_LOOP_OFF);
-    //fmod_playsound(0);
     //fmod_systemupdate();
-    #endif //USE_SOUND
+#endif //USE_SOUND
 }
 
 void playsound(void)
 {
-    #ifdef USE_SOUND
+#ifdef USE_SOUND
     fmod_playsound(0);
-    #endif
+#endif
 }
 
-/*
-   void game_over()
+
+
+void game_over()
    {
 //Clear the screen
-glClearColor(1.0, 1.0, 1.0, 1.0);
+//glClearColor(1.0, 1.0, 1.0, 1.0);
 //glClear(GL_COLOR_BUFFER_BIT);
 //load the images file into a ppm structure.
 overImage = ppm6GetImage("./images/game_over.ppm");
 //create opengl texture elements
 glGenTextures(1, &overTexture);
 
-//---------------------------------------------------------------------
 //game over
 glBindTexture(GL_TEXTURE_2D, overTexture);
 
@@ -173,8 +181,8 @@ overImage->width, overImage->height,
 void r_gameOver()
 {
 //texture background
-glColor3f(1.0, 1.0, 1.0);
-if (gameOver) {
+//glColor3f(1.0, 1.0, 1.0);
+//if (gameOver) {
 glBindTexture(GL_TEXTURE_2D, overTexture);
 glBegin(GL_QUADS);
 glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
@@ -182,9 +190,8 @@ glTexCoord2f(0.0f, 0.0f); glVertex2i(0, WINDOW_HEIGHT);
 glTexCoord2f(1.0f, 0.0f); glVertex2i(WINDOW_WIDTH, WINDOW_HEIGHT);
 glTexCoord2f(1.0f, 1.0f); glVertex2i(WINDOW_WIDTH, 0);
 glEnd();
-}
-
+//}
 
 } 
 
- */
+

@@ -150,7 +150,6 @@ int main(void)
     for (int i = 0; i < 65536;i++){
         keys[i] = 0;
     }
-
     //start animation
     while (!done) {
         while (XPending(dpy)) {
@@ -234,7 +233,7 @@ void init_opengl(void)
     buildIdleImage();
     buildProjImage();
     platforms();
-
+    game_over();
 }
 
 void makeParticle(Game *game, int x, int y) 
@@ -413,7 +412,7 @@ void checkMovement(Game *game)
             }
         }
     }
-    if (keys[XK_Down]) {
+    if (keys[XK_space]) {
         //game,x,y,xvel,yvel
         makeProjectile(game, (p->s.center.x + p->s.width + 12.1),p->s.center.y,10.0,0.0,200,10,10);
     }
@@ -589,6 +588,7 @@ void movement(Game *game)
             p->velocity.x = 0;
         }
     }
+
 }
 
 void render(Game *game)
@@ -631,13 +631,6 @@ void render(Game *game)
             glEnable(GL_TEXTURE_2D);
             drawPlatforms(w, h);
             glDisable(GL_TEXTURE_2D);
-
-            /*glBegin(GL_QUADS);
-              glVertex2i(-w,-h);
-              glVertex2i(-w, h);
-              glVertex2i( w, h);
-              glVertex2i( w,-h);
-              glEnd(); */
             glPopMatrix();
         }
         //temp draw calls for BOSS
@@ -711,33 +704,35 @@ void render(Game *game)
         //refocus camera on start screen area
         centerCamera(0,WINDOW_WIDTH,0,WINDOW_HEIGHT);
 
-        r_texture();
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glEnable(GL_TEXTURE_2D);
-
+//        r_texture();
+//        glBindTexture(GL_TEXTURE_2D, 0);
+//        glEnable(GL_TEXTURE_2D);
+//        glBindTexture(GL_TEXTURE_2D);
         Rect r;
-        r.bot = 570;
-        r.left = 10;
+        r.bot = 400;
+        r.left = 300;
         r.center = 0;
         if( lives > 0 ) {
+            r_texture();
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glEnable(GL_TEXTURE_2D);
             ggprint16(&r, 16, 0x00ffffff, "You died, Click to respawn!");
         }
 
         if( lives <= 0 ) {
-            ggprint16(&r, 16, 0x00ff0000, "Game Over");
+            fmod_stopsound();
+            fmod_playsound(1);
+            r_gameOver();
+            //glDisable(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glEnable(GL_TEXTURE_2D);
+            ggprint16(&r, 150, 0x00ff0000, "G A M E  O V E R");
         }
     }
 
     if (start) {
         r_texture();
-        Rect r;
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glEnable(GL_TEXTURE_2D);
-
-        r.bot = 570;
-        r.left = 10;
-        r.center = 0;
-        ggprint16(&r, 16, 0x00ffffff, "CLICK TO START!");
+        text();
     }
 }
 

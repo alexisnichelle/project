@@ -11,11 +11,6 @@ typedef struct t_rect {
 	int centerx;
 	int centery; 
 } Rect;   
-
-/*typedef struct t_shape {
-    float width, height;
-    float radius;
-} Rect; */
  
 extern void initialize_fonts(void);
 extern void cleanup_fonts(void);
