@@ -656,8 +656,13 @@ void render(Game *game)
             p = &game->projectile[i];
             //glColor3ub(p->r,p->g,p->b);
 
-
+            if(p->type == 0){
             drawCharProjSprite(p->s.center.x,p->s.center.y, p->s.width, p->s.height);
+            }
+            if(p->type ==1){
+
+            drawBossProjSprite(p->s.center.x,p->s.center.y, p->s.width, p->s.height);
+            }
         }
 
         //draw all particles here(character)

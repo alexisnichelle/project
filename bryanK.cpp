@@ -31,11 +31,11 @@ Ppmimage *bgImage = NULL;
 GLuint bgTexture;
 GLuint charTexture[16];
 GLuint idleTexture[6];
-GLuint cprojTexture[4];
+GLuint cprojTexture[9];
 GLuint silhouetteTexture;
 Ppmimage *charImage[16];
 Ppmimage *idleImage[6];
-Ppmimage *cprojImage[4];
+Ppmimage *cprojImage[9];
 int bg = 1;
 static int bossShotPattern = 0;
 struct timespec timeCharacter;
@@ -69,8 +69,8 @@ void fireProjectile(struct  Projectile *projectile, int &n, float x, float y, fl
         p->type = 1;
         p->s.center.x = x;
         p->s.center.y = y;
-        p->s.width = 12;
-        p->s.height = 6;
+        p->s.width = 14;
+        p->s.height = 14;
         p->velocity.y = yvel;
         p->velocity.x = xvel;
         n++;
@@ -87,37 +87,37 @@ void bossShot(struct  Projectile *projectile, int &n, float charx, float bossx, 
     if((timeDiff(&timeBossShot, &timeCurrent)) >= bossDelay){//stats[2] ==firerate
     switch(bossShotPattern) {
         case 0 : 
-            fireProjectile(projectile,n,bossx + bossw+13, bossy, 5,5);
-            fireProjectile(projectile,n,bossx + bossw+13, bossy, 5,0);
-            fireProjectile(projectile,n,bossx + bossw+13, bossy, 5,-4);
-            fireProjectile(projectile,n,bossx - bossw-13, bossy, -5,5);
-            fireProjectile(projectile,n,bossx - bossw-13, bossy, -5,0);
-            fireProjectile(projectile,n,bossx - bossw-13, bossy, -5,-4);
+            fireProjectile(projectile,n,bossx + bossw+15, bossy, 5,5);
+            fireProjectile(projectile,n,bossx + bossw+15, bossy, 5,0);
+            fireProjectile(projectile,n,bossx + bossw+15, bossy, 5,-4);
+            fireProjectile(projectile,n,bossx - bossw-15, bossy, -5,5);
+            fireProjectile(projectile,n,bossx - bossw-15, bossy, -5,0);
+            fireProjectile(projectile,n,bossx - bossw-15, bossy, -5,-4);
             bossDelay = 3.0;
             break;
         case 1 : 
-            fireProjectile(projectile,n,bossx + bossw+13, bossy, 5,5);
-            fireProjectile(projectile,n,bossx + bossw+13, bossy, 5,-4);
-            fireProjectile(projectile,n,bossx - bossw-13, bossy, -5,5);
-            fireProjectile(projectile,n,bossx - bossw-13, bossy, -5,-4);
+            fireProjectile(projectile,n,bossx + bossw+15, bossy, 5,5);
+            fireProjectile(projectile,n,bossx + bossw+15, bossy, 5,-4);
+            fireProjectile(projectile,n,bossx - bossw-15, bossy, -5,5);
+            fireProjectile(projectile,n,bossx - bossw-15, bossy, -5,-4);
             bossDelay = 8.0;
             break;
         case 2 : 
-            fireProjectile(projectile,n,bossx + bossw+13, bossy, 5,5);
-            fireProjectile(projectile,n,bossx + bossw+13, bossy, 5,0);
-            fireProjectile(projectile,n,bossx + bossw+13, bossy, 5,-4);
-            fireProjectile(projectile,n,bossx - bossw-13, bossy, -5,5);
-            fireProjectile(projectile,n,bossx - bossw-13, bossy, -5,0);
-            fireProjectile(projectile,n,bossx - bossw-13, bossy, -5,-4);
-            fireProjectile(projectile,n,bossx , bossy-bossh-7, 5,-6);
-            fireProjectile(projectile,n,bossx , bossy-bossh-7, 0,-6);
-            fireProjectile(projectile,n,bossx , bossy-bossh-7, -5,-6);
+            fireProjectile(projectile,n,bossx + bossw+15, bossy, 5,5);
+            fireProjectile(projectile,n,bossx + bossw+15, bossy, 5,0);
+            fireProjectile(projectile,n,bossx + bossw+15, bossy, 5,-4);
+            fireProjectile(projectile,n,bossx - bossw-15, bossy, -5,5);
+            fireProjectile(projectile,n,bossx - bossw-15, bossy, -5,0);
+            fireProjectile(projectile,n,bossx - bossw-15, bossy, -5,-4);
+            fireProjectile(projectile,n,bossx , bossy-bossh-16, 5,-6);
+            fireProjectile(projectile,n,bossx , bossy-bossh-16, 0,-6);
+            fireProjectile(projectile,n,bossx , bossy-bossh-16, -5,-6);
             bossDelay = 2.0;
             break;
         case 3 : 
-            fireProjectile(projectile,n,bossx , bossy-bossh-7, 5,-6);
-            fireProjectile(projectile,n,bossx , bossy-bossh-7, 0,-6);
-            fireProjectile(projectile,n,bossx , bossy-bossh-7, -5,-6);
+            fireProjectile(projectile,n,bossx , bossy-bossh-16, 5,-6);
+            fireProjectile(projectile,n,bossx , bossy-bossh-16, 0,-6);
+            fireProjectile(projectile,n,bossx , bossy-bossh-16, -5,-6);
             bossDelay = 3.0;
             break;
 
@@ -264,6 +264,35 @@ void drawCharProjSprite(float x, float y, int w, int h)
     curanim = timeDiff(&timeCharacter, &timeCurrent);
     curanimtime = (int) curanim;
     curanimtime = curanimtime%4;
+    glColor3ub(255,255,255);//set color to pure white to avoid blending 
+    
+    //draw projectile at projectiles position
+    glPushMatrix();
+    //glTranslatef(x,y,0);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_ALPHA_TEST);
+    glBindTexture(GL_TEXTURE_2D, cprojTexture[curanimtime]);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f,1.0f); glVertex2i(x-w,y-h);
+    glTexCoord2f(0.0f,0.0f); glVertex2i(x-w,y+h);
+    glTexCoord2f(1.0f,0.0f); glVertex2i(x+w,y+h);
+    glTexCoord2f(1.0f,1.0f); glVertex2i(x+w,y-h);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    //disable alpha blending to avoid conflict on other draw functions
+    glDisable(GL_ALPHA_TEST);
+    //glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+}
+
+void drawBossProjSprite(float x, float y, int w, int h)
+{
+    double curanim;
+    int curanimtime;
+    curanim = timeDiff(&timeCharacter, &timeCurrent);
+    curanimtime = (int) curanim;
+    curanimtime = curanimtime%5;
+    curanimtime +=4; //skip character sprites
     glColor3ub(255,255,255);//set color to pure white to avoid blending 
     
     //draw projectile at projectiles position
@@ -490,7 +519,12 @@ void buildProjImage()
     cprojImage[1] = ppm6GetImage("./images/cbullet2.ppm");
     cprojImage[2] = ppm6GetImage("./images/cbullet3.ppm");
     cprojImage[3] = ppm6GetImage("./images/cbullet4.ppm");
-    for(int i = 0; i < 4; i++)
+    cprojImage[4] = ppm6GetImage("./images/bbullet1.ppm");
+    cprojImage[5] = ppm6GetImage("./images/bbullet2.ppm");
+    cprojImage[6] = ppm6GetImage("./images/bbullet3.ppm");
+    cprojImage[7] = ppm6GetImage("./images/bbullet4.ppm");
+    cprojImage[8] = ppm6GetImage("./images/bbullet5.ppm");
+    for(int i = 0; i < 9; i++)
     {
         glGenTextures(1, &cprojTexture[i]);
         glGenTextures(1, &silhouetteTexture);
