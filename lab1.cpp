@@ -98,7 +98,7 @@ struct Game {
             box[i].center.y = 1;
         }
         buildlevel(box,curbox);
-	level(box,curbox);
+        level(box,curbox);
         n=0;
     }
 };
@@ -396,7 +396,7 @@ void checkMovement(Game *game)
                 p->velocity.y = 18;
             }else{
 
-            p->velocity.y = 33.0;
+                p->velocity.y = 33.0;
             }
         }
     }
@@ -426,125 +426,148 @@ void movement(Game *game)
         proj->s.center.x += proj->velocity.x;
         Shape *boss = &game->boss.s;
         //check for boss collision
-        
+
         if((stats[0] > 0)&&//xcheck
-                    (((proj->s.center.x + proj->s.width) > (p->s.center.x - p->s.width) &&
-                    (proj->s.center.x - proj->s.width) < (p->s.center.x + p->s.width)) 
-                    &&//ycheck
-                    (((proj->s.center.y + proj->s.height) > (p->s.center.y - p->s.height)) &&
-                    ((proj->s.center.y - proj->s.height) < (p->s.center.y + p->s.height)))))
+                (((proj->s.center.x + proj->s.width) > (p->s.center.x - p->s.width) &&
+                  (proj->s.center.x - proj->s.width) < (p->s.center.x + p->s.width)) 
+                 &&//ycheck
+                 (((proj->s.center.y + proj->s.height) > (p->s.center.y - p->s.height)) &&
+                  ((proj->s.center.y - proj->s.height) < (p->s.center.y + p->s.height)))))
         {
             stats[0] -= 10;//DAMAGE
-            if(stats[0]){
+            if(stats[0] <= 0){
                 //kill yourself
                 //do death anim
+                p->s.center.x = 200;
+                p->s.center.y = 190;
+                std::cout <<"you died"<<std::endl;
+                dead = true;
+                mission = false;
+                lives--;
+                stats[0] = 100;
+            
+
+        }
+        delete_projectile(i,game);
+    } else if(liveboss&&//xcheck
+            (((proj->s.center.x + proj->s.width) > (boss->center.x - boss->width) &&
+              (proj->s.center.x - proj->s.width) < (boss->center.x + boss->width)) 
+             &&//ycheck
+             (((proj->s.center.y + proj->s.height) > (boss->center.y - boss->height)) &&
+              ((proj->s.center.y - proj->s.height) < (boss->center.y + boss->height))))){
+        game->boss.health -= 10;//DAMAGE
+        if(game->boss.health <=0){
+            //kill it
+            liveboss = false;
+            //do death anim
+        }
+        delete_projectile(i,game);
+    }//delete if projectile went too far
+    else if(proj->s.center.x > (p->s.center.x + 400)){
+        delete_projectile(i,game);
+    }else {
+        //loop through box collisions
+        Shape *testbox;
+        for( int boxxy = 0; boxxy < curbox; boxxy++){
+            testbox = &game->box[boxxy];
+            if((((proj->s.center.x + proj->s.width) > (testbox->center.x - testbox->width)) &&
+                        ((proj->s.center.x - proj->s.width) < (testbox->center.x + testbox->width)) &&
+                        ((proj->s.center.y + proj->s.height) > (testbox->center.y - testbox->height)) &&
+                        ((proj->s.center.y - proj->s.height) < (testbox->center.y + testbox->height))))
+            {//iff projectile collides with plabtorm
+                delete_projectile(i,game);
             }
-            delete_projectile(i,game);
-        } else if(liveboss&&//xcheck
-                    (((proj->s.center.x + proj->s.width) > (boss->center.x - boss->width) &&
-                    (proj->s.center.x - proj->s.width) < (boss->center.x + boss->width)) 
-                    &&//ycheck
-                    (((proj->s.center.y + proj->s.height) > (boss->center.y - boss->height)) &&
-                    ((proj->s.center.y - proj->s.height) < (boss->center.y + boss->height))))){
-            game->boss.health -= 10;//DAMAGE
-            if(game->boss.health <=0){
-                //kill it
-                liveboss = false;
-                //do death anim
-            }
-            delete_projectile(i,game);
-        }//delete if projectile went too far
-        else if(proj->s.center.x > (p->s.center.x + 400)){
-            delete_projectile(i,game);
-        }
-
-    }
-    //apply gravity
-    p->velocity.y -= 2.1;
-    //apply velocity  
-    p->s.center.x += p->velocity.x;
-    p->s.center.y += p->velocity.y;
-
-    //check for collision with shapes...
-    Shape *b;//for brevity
-    //checks for downwards collision
-    for (int i = 0; i < curbox; i++) {
-        b = &game->box[i];
-        //case 1: above box, between borders
-        if((p->s.center.x > (b->center.x - b->width)) &&//xcheck
-                (p->s.center.x < (b->center.x + b->width)) &&
-                 ((p->s.center.y ) > (b->center.y - b->height)) &&
-                 ((p->s.center.y - p->s.height) < (b->center.y + b->height))){
-          p->velocity.y = 0;
-          p->s.center.y = b->center.y + b->height + p->s.height + .1;
-        }
-        //case 2: below box, between borders
-        if((p->s.center.x > (b->center.x - b->width)) &&//xcheck
-                (p->s.center.x < (b->center.x + b->width)) &&
-                 ((p->s.center.y + p->s.height) > (b->center.y - b->height)) &&
-                 ((p->s.center.y + p->s.height) < (b->center.y + b->height))){
-          p->velocity.y = -.11;
-          p->s.center.y = b->center.y - b->height - p->s.height - .1;
-        }
-        
-        //case 3: left 
-        if((p->s.center.x  < (b->center.x - b->width)) &&//xcheck
-                (p->s.center.x + p->s.width  > (b->center.x - b->width)) &&
-                 ((p->s.center.y - p->s.height) < (b->center.y + b->height)) &&
-                 ((p->s.center.y + p->s.height) > (b->center.y - b->height))){
-          p->velocity.x = 0;
-          p->s.center.x = b->center.x - b->width - p->s.width - .1;
-        }
-        //case 4: right
-        if((p->s.center.x  > (b->center.x + b->width)) &&//xcheck
-                (p->s.center.x - p->s.width  < (b->center.x + b->width)) &&
-                 ((p->s.center.y - p->s.height) < (b->center.y + b->height)) &&
-                 ((p->s.center.y + p->s.height) > (b->center.y - b->height))){
-          p->velocity.x = 0;
-          p->s.center.x = b->center.x + b->width + p->s.width + .1;
-        }
-
-                 
-
-                 
-
-                 
-
-                 
-
-                 
-        /*//old collision detect
-        if ((p->s.center.x + p->s.width) >= b->center.x - b->width &&
-                (p->s.center.x - p->s.width) <= b->center.x + b->width &&
-                (p->s.center.y - p->s.height) < b->center.y + b->height &&
-                (p->s.center.y + p->s.height) > b->center.y - b->height){ 
-            if((p->s.center.y < b->center.y) && (p->velocity.y > 0)){//collision upwards??
-                p->velocity.y = -.11;
-                p->s.center.y = b->center.y - b->height -p->s.height - 0.1;
-            } else {
-                p->s.center.y = b->center.y + b->height + p->s.height + 0.1;
-                p->velocity.y = 0;
-            }
-        }*/
-    }
-    //if off platform reset to start loc 200,190    
-    if (p->s.center.y < -200.0) {
-        p->s.center.x = 200;
-        p->s.center.y = 190;
-        std::cout <<"you died"<<std::endl;
-        dead = true;
-        mission = false;
-        lives--;
-    }
-
-    //movement is called post checkkeys
-    //set X velocity to zero unless jumping or a key is depressed
-    if (!((p->velocity.y > 0.1) || (p->velocity.y < -.1))) {
-        p->velocity.x /= 1.5;
-        if ((p->velocity.x > -.5) && (p->velocity.x < .5)) {
-            p->velocity.x = 0;
         }
     }
+
+
+}
+//apply gravity
+p->velocity.y -= 2.1;
+//apply velocity  
+p->s.center.x += p->velocity.x;
+p->s.center.y += p->velocity.y;
+
+//check for collision with shapes...
+Shape *b;//for brevity
+//checks for downwards collision
+for (int i = 0; i < curbox; i++) {
+    b = &game->box[i];
+    //case 1: above box, between borders
+    if((p->s.center.x > (b->center.x - b->width)) &&//xcheck
+            (p->s.center.x < (b->center.x + b->width)) &&
+            ((p->s.center.y ) > (b->center.y - b->height)) &&
+            ((p->s.center.y - p->s.height) < (b->center.y + b->height))){
+        p->velocity.y = 0;
+        p->s.center.y = b->center.y + b->height + p->s.height + .1;
+    }
+    //case 2: below box, between borders
+    if((p->s.center.x > (b->center.x - b->width)) &&//xcheck
+            (p->s.center.x < (b->center.x + b->width)) &&
+            ((p->s.center.y + p->s.height) > (b->center.y - b->height)) &&
+            ((p->s.center.y + p->s.height) < (b->center.y + b->height))){
+        p->velocity.y = -.11;
+        p->s.center.y = b->center.y - b->height - p->s.height - .1;
+    }
+
+    //case 3: left 
+    if((p->s.center.x  < (b->center.x - b->width)) &&//xcheck
+            (p->s.center.x + p->s.width  > (b->center.x - b->width)) &&
+            ((p->s.center.y - p->s.height) < (b->center.y + b->height-2)) &&
+            ((p->s.center.y + p->s.height) > (b->center.y - b->height))){
+        p->velocity.x = 0;
+        p->s.center.x = b->center.x - b->width - p->s.width - .1;
+    }
+    //case 4: right
+    if((p->s.center.x  > (b->center.x + b->width)) &&//xcheck
+            (p->s.center.x - p->s.width  < (b->center.x + b->width)) &&
+            ((p->s.center.y - p->s.height) < (b->center.y + b->height-2)) &&
+            ((p->s.center.y + p->s.height) > (b->center.y - b->height))){
+        p->velocity.x = 0;
+        p->s.center.x = b->center.x + b->width + p->s.width + .1;
+    }
+
+
+
+
+
+
+
+
+
+
+    /*//old collision detect
+      if ((p->s.center.x + p->s.width) >= b->center.x - b->width &&
+      (p->s.center.x - p->s.width) <= b->center.x + b->width &&
+      (p->s.center.y - p->s.height) < b->center.y + b->height &&
+      (p->s.center.y + p->s.height) > b->center.y - b->height){ 
+      if((p->s.center.y < b->center.y) && (p->velocity.y > 0)){//collision upwards??
+      p->velocity.y = -.11;
+      p->s.center.y = b->center.y - b->height -p->s.height - 0.1;
+      } else {
+      p->s.center.y = b->center.y + b->height + p->s.height + 0.1;
+      p->velocity.y = 0;
+      }
+      }*/
+}
+//if off platform reset to start loc 200,190    
+if (p->s.center.y < -200.0) {
+    p->s.center.x = 200;
+    p->s.center.y = 190;
+    std::cout <<"you died"<<std::endl;
+    dead = true;
+    mission = false;
+    lives--;
+}
+
+//movement is called post checkkeys
+//set X velocity to zero unless jumping or a key is depressed
+if (!((p->velocity.y > 0.1) || (p->velocity.y < -.1))) {
+    p->velocity.x /= 1.5;
+    if ((p->velocity.x > -.5) && (p->velocity.x < .5)) {
+        p->velocity.x = 0;
+    }
+}
 }
 
 void render(Game *game)
@@ -604,15 +627,15 @@ void render(Game *game)
             h = s->height;
 
             drawBossIdleSprite(s->center.x,s->center.y, w, h);/*
-            glPushMatrix();
-            glTranslatef(s->center.x, s->center.y, 0);
-            glBegin(GL_QUADS);
-            glVertex2i(-w,-h);
-            glVertex2i(-w,h);
-            glVertex2i(w,h);
-            glVertex2i(w,-h);
-            glEnd();
-            glPopMatrix();*/
+                                                                 glPushMatrix();
+                                                                 glTranslatef(s->center.x, s->center.y, 0);
+                                                                 glBegin(GL_QUADS);
+                                                                 glVertex2i(-w,-h);
+                                                                 glVertex2i(-w,h);
+                                                                 glVertex2i(w,h);
+                                                                 glVertex2i(w,-h);
+                                                                 glEnd();
+                                                                 glPopMatrix();*/
         }
 
 
@@ -636,16 +659,17 @@ void render(Game *game)
             //moving, use moving sprites
             //MOVEMENT SPRITE CALL HERE DOES NOTHING FFS
             if((keys[XK_Right])){
-            drawRunningSprite(c->x,c->y,w,h,false);
+                drawRunningSprite(c->x,c->y,w,h,false);
             }
             else{
-            drawRunningSprite(c->x,c->y,w,h,true);
+                drawRunningSprite(c->x,c->y,w,h,true);
             }
 
         } else {
             //IDLE SPRITE CALL HERE FFS
             drawIdleSprite(c->x,c->y,w,h);
         }
+        drawHealth(c->x, stats[0]);
         //re-enable textures after basic shapes are done
         glEnable(GL_TEXTURE_2D);
 

@@ -17,7 +17,7 @@ void buildlevel(Shape *box, int &number)
     //manually assign individual boxes
     box[0].width = 100;
     box[0].height = 10;
-    box[0].center.x = 100 ;
+    box[0].center.x = 0 ;
     box[0].center.y = 10;
     number++;
     box[1].width = 100;

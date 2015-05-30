@@ -5,5 +5,6 @@ collision rewrite:
     NOTE: currently if more than half the character is off a platform it WILL push you off
 
 5/29 made minor changes to platform position to work with new collisions
-5/29 spring works by pressing shift and running
+5/29 sprint works by pressing shift and running  (character can outrun own shots, this WILL damage the character)
 5/29 Short jump enabled by pressing CTRL and jumping
+5/29 Character takes damage from shots now, currently can take ten shots

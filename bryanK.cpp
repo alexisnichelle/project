@@ -4,6 +4,8 @@
  * team4
  * codename "uberdude"
  * cpp implementation
+ * collision+physics in main file
+ * simultaneous input in main file
  * */
 
 #include <iostream>
@@ -133,6 +135,32 @@ void drawBossIdleSprite(float x, float y, int w, int h)
     glDisable(GL_ALPHA_TEST);
     //glDisable(GL_TEXTURE_2D);
     glPopMatrix();
+}
+void drawHealth(float x, int health){
+    int y = 550;
+    x = x+240;
+    //draw black box
+    glColor3ub(0,0,0);
+    glBegin(GL_QUADS);
+    glVertex2i(x-105,y-10);
+    glVertex2i(x-105,y+10);
+    glVertex2i(x+105,y+10);
+    glVertex2i(x+105,y-10);
+    glEnd();
+    glColor3ub(200,0,0);
+    glBegin(GL_QUADS);
+    glVertex2i(x-100,y-7);
+    glVertex2i(x-100,y+7);
+    glVertex2i(x+100,y+7);
+    glVertex2i(x+100,y-7);
+    glEnd();
+    glColor3ub(0,200,0);
+    glBegin(GL_QUADS);
+    glVertex2i(x-100,y-7);
+    glVertex2i(x-100,y+7);
+    glVertex2i(x-100+(health * 2),y+7);
+    glVertex2i(x-100+(health * 2),y-7);
+    glEnd();
 }
 
 void drawCharProjSprite(float x, float y, int w, int h)
