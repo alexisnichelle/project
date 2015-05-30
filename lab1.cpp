@@ -712,7 +712,6 @@ void render(Game *game)
             r_gameOver();
             glBindTexture(GL_TEXTURE_2D, 0);
             glEnable(GL_TEXTURE_2D);
-            //ggprint16(&r, 150, 0x00ff0000, "G A M E  O V E R");
         }
     }
 
