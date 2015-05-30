@@ -19,6 +19,7 @@
 #include <X11/keysym.h>
 #include <GL/glx.h>
 #include <GL/gl.h>
+#include "mystruct.h"
 #include "ppm.h"
 #include "bryanK.h"
 extern "C" {
@@ -36,10 +37,13 @@ Ppmimage *charImage[16];
 Ppmimage *idleImage[6];
 Ppmimage *cprojImage[4];
 int bg = 1;
+static int bossShotPattern = 0;
 struct timespec timeCharacter;
 struct timespec timeCurrent;
+struct timespec timeBossShot;
 struct timespec timeStart;
 double oobillion = 1.0/1e9;//for teh nanoseconds
+double bossDelay = 0.0;
 
 
 //function that returns the difference in time between start and end
@@ -54,7 +58,97 @@ double timeDiff(struct timespec *start, struct timespec *end)
 void timeCopy(struct timespec *destination, struct timespec *source)
 {
     memcpy(destination, source, sizeof(struct timespec));
+
 }
+
+void fireProjectile(struct  Projectile *projectile, int &n, float x, float y, float xvel, float yvel){
+        Projectile *p = &projectile[n];
+        p->r = 100;
+        p->g = 100;
+        p->b = 100;
+        p->type = 1;
+        p->s.center.x = x;
+        p->s.center.y = y;
+        p->s.width = 12;
+        p->s.height = 6;
+        p->velocity.y = yvel;
+        p->velocity.x = xvel;
+        n++;
+        //clock_gettime(CLOCK_REALTIME, &timeBullet);
+
+}
+
+
+//pattern for boss shots, takes in the array of projectiles, number of active projectiles, character x position (for checking)
+//boss x and y position and boss width/height
+void bossShot(struct  Projectile *projectile, int &n, float charx, float bossx, float bossy,int bossw, int bossh){
+//test creation
+
+    if((timeDiff(&timeBossShot, &timeCurrent)) >= bossDelay){//stats[2] ==firerate
+    switch(bossShotPattern) {
+        case 0 : 
+            fireProjectile(projectile,n,bossx + bossw+13, bossy, 5,5);
+            fireProjectile(projectile,n,bossx + bossw+13, bossy, 5,0);
+            fireProjectile(projectile,n,bossx + bossw+13, bossy, 5,-4);
+            fireProjectile(projectile,n,bossx - bossw-13, bossy, -5,5);
+            fireProjectile(projectile,n,bossx - bossw-13, bossy, -5,0);
+            fireProjectile(projectile,n,bossx - bossw-13, bossy, -5,-4);
+            bossDelay = 3.0;
+            break;
+        case 1 : 
+            fireProjectile(projectile,n,bossx + bossw+13, bossy, 5,5);
+            fireProjectile(projectile,n,bossx + bossw+13, bossy, 5,-4);
+            fireProjectile(projectile,n,bossx - bossw-13, bossy, -5,5);
+            fireProjectile(projectile,n,bossx - bossw-13, bossy, -5,-4);
+            bossDelay = 8.0;
+            break;
+        case 2 : 
+            fireProjectile(projectile,n,bossx + bossw+13, bossy, 5,5);
+            fireProjectile(projectile,n,bossx + bossw+13, bossy, 5,0);
+            fireProjectile(projectile,n,bossx + bossw+13, bossy, 5,-4);
+            fireProjectile(projectile,n,bossx - bossw-13, bossy, -5,5);
+            fireProjectile(projectile,n,bossx - bossw-13, bossy, -5,0);
+            fireProjectile(projectile,n,bossx - bossw-13, bossy, -5,-4);
+            fireProjectile(projectile,n,bossx , bossy-bossh-7, 5,-6);
+            fireProjectile(projectile,n,bossx , bossy-bossh-7, 0,-6);
+            fireProjectile(projectile,n,bossx , bossy-bossh-7, -5,-6);
+            bossDelay = 2.0;
+            break;
+        case 3 : 
+            fireProjectile(projectile,n,bossx , bossy-bossh-7, 5,-6);
+            fireProjectile(projectile,n,bossx , bossy-bossh-7, 0,-6);
+            fireProjectile(projectile,n,bossx , bossy-bossh-7, -5,-6);
+            bossDelay = 3.0;
+            break;
+
+
+
+
+
+    }
+    bossShotPattern +=1;
+    if(bossShotPattern >=3){
+        bossShotPattern = 0;
+    }
+
+    clock_gettime(CLOCK_REALTIME, &timeBossShot);
+    }
+    /*//testing projectile maker
+    fireProjectile(projectile,n,100,300,5,5); 
+    fireProjectile(projectile,n,100,300,5,0); 
+    fireProjectile(projectile,n,100,300,0,5); 
+    fireProjectile(projectile,n,100,300,0,-5); 
+    */
+    //warning clears
+    charx = charx;
+    bossx = bossx;
+    bossy = bossy;
+    bossw = bossw;
+    bossh = bossh;
+}
+
+
+
 
 
 //draws sprite of character running, uses alpha blengind to make background of sprite
@@ -164,7 +258,6 @@ void drawHealth(float x, int health){
 }
 
 void drawCharProjSprite(float x, float y, int w, int h)
-//funtion that draws boss idle sprites located at pos 14 and 15 of charImage
 {
     double curanim;
     int curanimtime;
@@ -173,7 +266,7 @@ void drawCharProjSprite(float x, float y, int w, int h)
     curanimtime = curanimtime%4;
     glColor3ub(255,255,255);//set color to pure white to avoid blending 
     
-    //draw a recangle at character's position using run sprite
+    //draw projectile at projectiles position
     glPushMatrix();
     //glTranslatef(x,y,0);
     glEnable(GL_TEXTURE_2D);

@@ -4,6 +4,7 @@
 //global variables for time
 extern struct timespec timeCharacter;//used for frame check on character sprites
 extern struct timespec timeCurrent;//current time via clock
+extern struct timespec timeBossShot;//time of last boss shot
 extern struct timespec timeStart;
 //functions for time, functionality notes in bryanK.cpp
 extern double timeDiff(struct timespec *start, struct timespec *end); 
@@ -11,6 +12,9 @@ extern void timeCopy(struct timespec *destination, struct timespec *source);
 
 //camera functions
 extern void centerCamera(int left, int right, int bottom, int top);
+
+//boss pattern functions
+extern void bossShot(struct  Projectile * projectile, int &n, float charx, float bossx, float bossy,int bossw, int bossh);
 
 //draw functions
 extern void drawBossIdleSprite(float x, float y, int w, int h);

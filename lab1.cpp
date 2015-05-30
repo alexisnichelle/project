@@ -78,11 +78,12 @@ struct Game {
             p.velocity.x = 0;
             p.s.width = 12;
             p.s.height = 6;
+            p.type = 0;
         }
 
         //basic positioning for ze boss to be changed to end of level
-        boss.s.center.x = 1000;
-        boss.s.center.y =110;
+        boss.s.center.x = 3600;
+        boss.s.center.y =300;
         boss.velocity.x = 0;
         boss.velocity.y = 0;
         boss.s.width = 50;
@@ -133,6 +134,7 @@ int main(void)
     clock_gettime(CLOCK_REALTIME, &timeCharacter);
     clock_gettime(CLOCK_REALTIME, &timeStart);
     clock_gettime(CLOCK_REALTIME, &timeBullet);
+    clock_gettime(CLOCK_REALTIME, &timeBossShot);
 
     //zero out array of all possible key strokes
     for (int i = 0; i < 65536;i++){
@@ -253,6 +255,7 @@ void makeProjectile(Game *game, float x, float y,float xvel, float yvel,int r, i
         p->r = r;
         p->g = g;
         p->b = b;
+        p->type = 0;
         p->s.center.x = x;
         p->s.center.y = y;
         p->s.width = 12;
@@ -424,6 +427,7 @@ void movement(Game *game)
     for (int i = 0; i < game->n;i++) {
         proj = &game->projectile[i];
         proj->s.center.x += proj->velocity.x;
+        proj->s.center.y += proj->velocity.y;
         Shape *boss = &game->boss.s;
         //check for boss collision
 
@@ -445,129 +449,136 @@ void movement(Game *game)
                 mission = false;
                 lives--;
                 stats[0] = 100;
-            
 
-        }
-        delete_projectile(i,game);
-    } else if(liveboss&&//xcheck
-            (((proj->s.center.x + proj->s.width) > (boss->center.x - boss->width) &&
-              (proj->s.center.x - proj->s.width) < (boss->center.x + boss->width)) 
-             &&//ycheck
-             (((proj->s.center.y + proj->s.height) > (boss->center.y - boss->height)) &&
-              ((proj->s.center.y - proj->s.height) < (boss->center.y + boss->height))))){
-        game->boss.health -= 10;//DAMAGE
-        if(game->boss.health <=0){
-            //kill it
-            liveboss = false;
-            //do death anim
-        }
-        delete_projectile(i,game);
-    }//delete if projectile went too far
-    else if(proj->s.center.x > (p->s.center.x + 400)){
-        delete_projectile(i,game);
-    }else {
-        //loop through box collisions
-        Shape *testbox;
-        for( int boxxy = 0; boxxy < curbox; boxxy++){
-            testbox = &game->box[boxxy];
-            if((((proj->s.center.x + proj->s.width) > (testbox->center.x - testbox->width)) &&
-                        ((proj->s.center.x - proj->s.width) < (testbox->center.x + testbox->width)) &&
-                        ((proj->s.center.y + proj->s.height) > (testbox->center.y - testbox->height)) &&
-                        ((proj->s.center.y - proj->s.height) < (testbox->center.y + testbox->height))))
-            {//iff projectile collides with plabtorm
-                delete_projectile(i,game);
+
+            }
+            delete_projectile(i,game);
+        } else if(liveboss&&//xcheck
+                (((proj->s.center.x + proj->s.width) > (boss->center.x - boss->width) &&
+                  (proj->s.center.x - proj->s.width) < (boss->center.x + boss->width)) 
+                 &&//ycheck
+                 (((proj->s.center.y + proj->s.height) > (boss->center.y - boss->height)) &&
+                  ((proj->s.center.y - proj->s.height) < (boss->center.y + boss->height))))){
+            game->boss.health -= 10;//DAMAGE
+            if(game->boss.health <=0){
+                //kill it
+                liveboss = false;
+                //do death anim
+            }
+            delete_projectile(i,game);
+        }//delete if projectile went too far
+        else if(proj->s.center.x > (p->s.center.x + 400)){
+            delete_projectile(i,game);
+        }else {
+            //loop through box collisions
+            Shape *testbox;
+            for( int boxxy = 0; boxxy < curbox; boxxy++){
+                testbox = &game->box[boxxy];
+                if((((proj->s.center.x + proj->s.width) > (testbox->center.x - testbox->width)) &&
+                            ((proj->s.center.x - proj->s.width) < (testbox->center.x + testbox->width)) &&
+                            ((proj->s.center.y + proj->s.height) > (testbox->center.y - testbox->height)) &&
+                            ((proj->s.center.y - proj->s.height) < (testbox->center.y + testbox->height))))
+                {//iff projectile collides with plabtorm
+                    delete_projectile(i,game);
+                }
             }
         }
+
+
+    }
+    //apply gravity
+    p->velocity.y -= 2.1;
+    //apply velocity  
+    p->s.center.x += p->velocity.x;
+    p->s.center.y += p->velocity.y;
+
+    //check for collision with shapes...
+    Shape *b;//for brevity
+    //checks for downwards collision
+    for (int i = 0; i < curbox; i++) {
+        b = &game->box[i];
+        //case 1: above box, between borders
+        if((p->s.center.x > (b->center.x - b->width)) &&//xcheck
+                (p->s.center.x < (b->center.x + b->width)) &&
+                ((p->s.center.y ) > (b->center.y - b->height)) &&
+                ((p->s.center.y - p->s.height) < (b->center.y + b->height))){
+            p->velocity.y = 0;
+            p->s.center.y = b->center.y + b->height + p->s.height + .1;
+        }
+        //case 2: below box, between borders
+        if((p->s.center.x > (b->center.x - b->width)) &&//xcheck
+                (p->s.center.x < (b->center.x + b->width)) &&
+                ((p->s.center.y + p->s.height) > (b->center.y - b->height)) &&
+                ((p->s.center.y + p->s.height) < (b->center.y + b->height))){
+            p->velocity.y = -.11;
+            p->s.center.y = b->center.y - b->height - p->s.height - .1;
+        }
+
+        //case 3: left 
+        if((p->s.center.x  < (b->center.x - b->width)) &&//xcheck
+                (p->s.center.x + p->s.width  > (b->center.x - b->width)) &&
+                ((p->s.center.y - p->s.height) < (b->center.y + b->height-2)) &&
+                ((p->s.center.y + p->s.height) > (b->center.y - b->height))){
+            p->velocity.x = 0;
+            p->s.center.x = b->center.x - b->width - p->s.width - .1;
+        }
+        //case 4: right
+        if((p->s.center.x  > (b->center.x + b->width)) &&//xcheck
+                (p->s.center.x - p->s.width  < (b->center.x + b->width)) &&
+                ((p->s.center.y - p->s.height) < (b->center.y + b->height-2)) &&
+                ((p->s.center.y + p->s.height) > (b->center.y - b->height))){
+            p->velocity.x = 0;
+            p->s.center.x = b->center.x + b->width + p->s.width + .1;
+        }
+
+
+
+
+
+
+
+
+
+
+        /*//old collision detect
+          if ((p->s.center.x + p->s.width) >= b->center.x - b->width &&
+          (p->s.center.x - p->s.width) <= b->center.x + b->width &&
+          (p->s.center.y - p->s.height) < b->center.y + b->height &&
+          (p->s.center.y + p->s.height) > b->center.y - b->height){ 
+          if((p->s.center.y < b->center.y) && (p->velocity.y > 0)){//collision upwards??
+          p->velocity.y = -.11;
+          p->s.center.y = b->center.y - b->height -p->s.height - 0.1;
+          } else {
+          p->s.center.y = b->center.y + b->height + p->s.height + 0.1;
+          p->velocity.y = 0;
+          }
+          }*/
     }
 
+    if(liveboss){
+//extern void bossShot(struct  Projectile * projectile, int &n, float charx, float bossx, float bossy,int bossw, int bossh);
 
-}
-//apply gravity
-p->velocity.y -= 2.1;
-//apply velocity  
-p->s.center.x += p->velocity.x;
-p->s.center.y += p->velocity.y;
-
-//check for collision with shapes...
-Shape *b;//for brevity
-//checks for downwards collision
-for (int i = 0; i < curbox; i++) {
-    b = &game->box[i];
-    //case 1: above box, between borders
-    if((p->s.center.x > (b->center.x - b->width)) &&//xcheck
-            (p->s.center.x < (b->center.x + b->width)) &&
-            ((p->s.center.y ) > (b->center.y - b->height)) &&
-            ((p->s.center.y - p->s.height) < (b->center.y + b->height))){
-        p->velocity.y = 0;
-        p->s.center.y = b->center.y + b->height + p->s.height + .1;
+        bossShot(game->projectile,game->n,p->s.center.x,game->boss.s.center.x,game->boss.s.center.y,game->boss.s.width
+                ,game->boss.s.height);
     }
-    //case 2: below box, between borders
-    if((p->s.center.x > (b->center.x - b->width)) &&//xcheck
-            (p->s.center.x < (b->center.x + b->width)) &&
-            ((p->s.center.y + p->s.height) > (b->center.y - b->height)) &&
-            ((p->s.center.y + p->s.height) < (b->center.y + b->height))){
-        p->velocity.y = -.11;
-        p->s.center.y = b->center.y - b->height - p->s.height - .1;
+    //if off platform reset to start loc 200,190    
+    if (p->s.center.y < -200.0) {
+        p->s.center.x = 200;
+        p->s.center.y = 190;
+        std::cout <<"you died"<<std::endl;
+        dead = true;
+        mission = false;
+        lives--;
     }
 
-    //case 3: left 
-    if((p->s.center.x  < (b->center.x - b->width)) &&//xcheck
-            (p->s.center.x + p->s.width  > (b->center.x - b->width)) &&
-            ((p->s.center.y - p->s.height) < (b->center.y + b->height-2)) &&
-            ((p->s.center.y + p->s.height) > (b->center.y - b->height))){
-        p->velocity.x = 0;
-        p->s.center.x = b->center.x - b->width - p->s.width - .1;
+    //movement is called post checkkeys
+    //set X velocity to zero unless jumping or a key is depressed
+    if (!((p->velocity.y > 0.1) || (p->velocity.y < -.1))) {
+        p->velocity.x /= 1.5;
+        if ((p->velocity.x > -.5) && (p->velocity.x < .5)) {
+            p->velocity.x = 0;
+        }
     }
-    //case 4: right
-    if((p->s.center.x  > (b->center.x + b->width)) &&//xcheck
-            (p->s.center.x - p->s.width  < (b->center.x + b->width)) &&
-            ((p->s.center.y - p->s.height) < (b->center.y + b->height-2)) &&
-            ((p->s.center.y + p->s.height) > (b->center.y - b->height))){
-        p->velocity.x = 0;
-        p->s.center.x = b->center.x + b->width + p->s.width + .1;
-    }
-
-
-
-
-
-
-
-
-
-
-    /*//old collision detect
-      if ((p->s.center.x + p->s.width) >= b->center.x - b->width &&
-      (p->s.center.x - p->s.width) <= b->center.x + b->width &&
-      (p->s.center.y - p->s.height) < b->center.y + b->height &&
-      (p->s.center.y + p->s.height) > b->center.y - b->height){ 
-      if((p->s.center.y < b->center.y) && (p->velocity.y > 0)){//collision upwards??
-      p->velocity.y = -.11;
-      p->s.center.y = b->center.y - b->height -p->s.height - 0.1;
-      } else {
-      p->s.center.y = b->center.y + b->height + p->s.height + 0.1;
-      p->velocity.y = 0;
-      }
-      }*/
-}
-//if off platform reset to start loc 200,190    
-if (p->s.center.y < -200.0) {
-    p->s.center.x = 200;
-    p->s.center.y = 190;
-    std::cout <<"you died"<<std::endl;
-    dead = true;
-    mission = false;
-    lives--;
-}
-
-//movement is called post checkkeys
-//set X velocity to zero unless jumping or a key is depressed
-if (!((p->velocity.y > 0.1) || (p->velocity.y < -.1))) {
-    p->velocity.x /= 1.5;
-    if ((p->velocity.x > -.5) && (p->velocity.x < .5)) {
-        p->velocity.x = 0;
-    }
-}
 }
 
 void render(Game *game)
