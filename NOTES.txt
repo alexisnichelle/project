@@ -1,0 +1,9 @@
+Important notes, please update as needed
+
+collision rewrite:
+    character no longer moves up to top of platform, hitting side of platform stalls you
+    NOTE: currently if more than half the character is off a platform it WILL push you off
+
+5/29 made minor changes to platform position to work with new collisions
+5/29 spring works by pressing shift and running
+5/29 Short jump enabled by pressing CTRL and jumping

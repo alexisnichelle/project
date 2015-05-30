@@ -379,9 +379,9 @@ void checkMovement(Game *game)
 
     if ((keys[XK_Shift_L]) || (keys[XK_Shift_R]))
     {
-        stats[1] = 3;
+        stats[1] = 16;
     } else {
-        stats[1] = 6;
+        stats[1] = 8;
     }
     if (keys[XK_Right]) {
         p->velocity.x = stats[1];
@@ -392,7 +392,12 @@ void checkMovement(Game *game)
     if (keys[XK_Up]) {
 
         if (!((p->velocity.y > .1) || (p->velocity.y < -.1))) {
-            p->velocity.y = 30.0;
+            if(keys[XK_Control_L]){
+                p->velocity.y = 18;
+            }else{
+
+            p->velocity.y = 33.0;
+            }
         }
     }
     if (keys[XK_Down]) {
@@ -465,6 +470,50 @@ void movement(Game *game)
     //checks for downwards collision
     for (int i = 0; i < curbox; i++) {
         b = &game->box[i];
+        //case 1: above box, between borders
+        if((p->s.center.x > (b->center.x - b->width)) &&//xcheck
+                (p->s.center.x < (b->center.x + b->width)) &&
+                 ((p->s.center.y ) > (b->center.y - b->height)) &&
+                 ((p->s.center.y - p->s.height) < (b->center.y + b->height))){
+          p->velocity.y = 0;
+          p->s.center.y = b->center.y + b->height + p->s.height + .1;
+        }
+        //case 2: below box, between borders
+        if((p->s.center.x > (b->center.x - b->width)) &&//xcheck
+                (p->s.center.x < (b->center.x + b->width)) &&
+                 ((p->s.center.y + p->s.height) > (b->center.y - b->height)) &&
+                 ((p->s.center.y + p->s.height) < (b->center.y + b->height))){
+          p->velocity.y = -.11;
+          p->s.center.y = b->center.y - b->height - p->s.height - .1;
+        }
+        
+        //case 3: left 
+        if((p->s.center.x  < (b->center.x - b->width)) &&//xcheck
+                (p->s.center.x + p->s.width  > (b->center.x - b->width)) &&
+                 ((p->s.center.y - p->s.height) < (b->center.y + b->height)) &&
+                 ((p->s.center.y + p->s.height) > (b->center.y - b->height))){
+          p->velocity.x = 0;
+          p->s.center.x = b->center.x - b->width - p->s.width - .1;
+        }
+        //case 4: right
+        if((p->s.center.x  > (b->center.x + b->width)) &&//xcheck
+                (p->s.center.x - p->s.width  < (b->center.x + b->width)) &&
+                 ((p->s.center.y - p->s.height) < (b->center.y + b->height)) &&
+                 ((p->s.center.y + p->s.height) > (b->center.y - b->height))){
+          p->velocity.x = 0;
+          p->s.center.x = b->center.x + b->width + p->s.width + .1;
+        }
+
+                 
+
+                 
+
+                 
+
+                 
+
+                 
+        /*//old collision detect
         if ((p->s.center.x + p->s.width) >= b->center.x - b->width &&
                 (p->s.center.x - p->s.width) <= b->center.x + b->width &&
                 (p->s.center.y - p->s.height) < b->center.y + b->height &&
@@ -476,7 +525,7 @@ void movement(Game *game)
                 p->s.center.y = b->center.y + b->height + p->s.height + 0.1;
                 p->velocity.y = 0;
             }
-        }
+        }*/
     }
     //if off platform reset to start loc 200,190    
     if (p->s.center.y < -200.0) {
