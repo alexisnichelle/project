@@ -1,7 +1,8 @@
 /* 
  * Alexis Ragus
  * cs335 project: Uberdude
- * textures & sound
+ * textures
+ * sound
  */
 
 #include <iostream>
@@ -21,20 +22,19 @@ extern "C" {
 #define numbox 3
 
 #define USE_SOUND
-
 #ifdef USE_SOUND
 #include <FMOD/fmod.h>
 #include <FMOD/wincompat.h>
 #include "fmod.h"
 #endif
 
-Ppmimage *maverickImage=NULL;
+Ppmimage *titleImage=NULL;
 Ppmimage *overImage=NULL;
 Ppmimage *levelImage=NULL;
-GLuint maverickTexture;
+GLuint titleTexture;
 GLuint levelTexture;
 GLuint overTexture;
-int maverick = 1;
+int title = 1;
 int gameOver = 1;
 int level = 1;
 
@@ -46,7 +46,7 @@ void text(void)
     r.left = 325;
     r.center = 0;
     ggprint13(&r,36,0x00cdc2c2,"C l i c k   t o   S t a r t !");
-    
+
 }
 
 void platforms(void)
@@ -90,17 +90,17 @@ void texture(void)
 {
     glClearColor(1.0, 1.0, 1.0, 1.0);
     //glClear(GL_COLOR_BUFFER_BIT);
-    maverickImage = ppm6GetImage("./images/maverick.ppm");
+    titleImage = ppm6GetImage("./images/uberdude.ppm");
     //create opengl texture elements
-    glGenTextures(1, &maverickTexture);
+    glGenTextures(1, &titleTexture);
 
     //maverick
-    glBindTexture(GL_TEXTURE_2D, maverickTexture);
+    glBindTexture(GL_TEXTURE_2D, titleTexture);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
-            maverickImage->width, maverickImage->height,
-            0, GL_RGB, GL_UNSIGNED_BYTE, maverickImage->data);
+            titleImage->width, titleImage->height,
+            0, GL_RGB, GL_UNSIGNED_BYTE, titleImage->data);
 
 
     //initialize fonts
@@ -113,8 +113,8 @@ void r_texture()
 
     //texture background
     glColor3f(1.0, 1.0, 1.0);
-    if (maverick) {
-        glBindTexture(GL_TEXTURE_2D, maverickTexture);
+    if (title) {
+        glBindTexture(GL_TEXTURE_2D, titleTexture);
         glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
         glTexCoord2f(0.0f, 0.0f); glVertex2i(0, WINDOW_HEIGHT);
@@ -134,11 +134,15 @@ void createsounds(void)
         printf("ERROR - createsounds\n\n");
         return;
     }
-    if (fmod_createsound((const char *)"./title.mp3", 0)) {
+    if (fmod_createsound((const char *)"./sounds/title.mp3", 0)) {
         printf("ERROR - createsounds\n\n");
         return;
     }
-    if (fmod_createsound((const char *)"./sounds/game_over.mp3", 1)) {
+    if (fmod_createsound((const char *)"./sounds/game.mp3", 1)) {
+        printf("ERROR - fmod_createsound()\n\n");
+        return;
+    }
+    if (fmod_createsound((const char *)"./sounds/game_over.mp3", 2)) {
         printf("ERROR - fmod_createsound()\n\n");
         return;
     }
@@ -154,44 +158,47 @@ void playsound(void)
 #endif
 }
 
-
+void play_gameOver(void)
+{
+#ifdef USE_SOUND
+    fmod_playsound(2);
+#endif
+}
 
 void game_over()
-   {
-//Clear the screen
-//glClearColor(1.0, 1.0, 1.0, 1.0);
-//glClear(GL_COLOR_BUFFER_BIT);
-//load the images file into a ppm structure.
-overImage = ppm6GetImage("./images/game_over.ppm");
-//create opengl texture elements
-glGenTextures(1, &overTexture);
+{
+    //Clear the screen
+    //glClearColor(1.0, 1.0, 1.0, 1.0);
+    //glClear(GL_COLOR_BUFFER_BIT);
+    //load the images file into a ppm structure.
+    overImage = ppm6GetImage("./images/game_over.ppm");
+    //create opengl texture elements
+    glGenTextures(1, &overTexture);
 
-//game over
-glBindTexture(GL_TEXTURE_2D, overTexture);
+    //game over
+    glBindTexture(GL_TEXTURE_2D, overTexture);
 
-glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-glTexImage2D(GL_TEXTURE_2D, 0, 3,
-overImage->width, overImage->height,
-0, GL_RGB, GL_UNSIGNED_BYTE, maverickImage->data);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3,
+            overImage->width, overImage->height,
+            0, GL_RGB, GL_UNSIGNED_BYTE, overImage->data);
 
 
 }
 
 void r_gameOver()
 {
-//texture background
-//glColor3f(1.0, 1.0, 1.0);
-//if (gameOver) {
-glBindTexture(GL_TEXTURE_2D, overTexture);
-glBegin(GL_QUADS);
-glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
-glTexCoord2f(0.0f, 0.0f); glVertex2i(0, WINDOW_HEIGHT);
-glTexCoord2f(1.0f, 0.0f); glVertex2i(WINDOW_WIDTH, WINDOW_HEIGHT);
-glTexCoord2f(1.0f, 1.0f); glVertex2i(WINDOW_WIDTH, 0);
-glEnd();
-//}
+    //texture background
+    glColor3f(1.0, 1.0, 1.0);
+    //if (gameOver) {
+    glBindTexture(GL_TEXTURE_2D, overTexture);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
+    glTexCoord2f(0.0f, 0.0f); glVertex2i(0, WINDOW_HEIGHT);
+    glTexCoord2f(1.0f, 0.0f); glVertex2i(WINDOW_WIDTH, WINDOW_HEIGHT);
+    glTexCoord2f(1.0f, 1.0f); glVertex2i(WINDOW_WIDTH, 0);
+    glEnd();
+    //}
 
 } 
-
-

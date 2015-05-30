@@ -8,7 +8,8 @@ extern void platforms(void);
 extern void drawPlatforms(float w, float h);
 extern void createsounds(void);
 extern void playsound(void);
-extern void stopsound(void);
+extern void play_gameOver(void);
+extern void sound(void);
 extern void game_over(void);
 extern void r_gameOver(void);
 

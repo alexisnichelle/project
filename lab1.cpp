@@ -541,14 +541,6 @@ void movement(Game *game)
         }
 
 
-
-
-
-
-
-
-
-
         /*//old collision detect
           if ((p->s.center.x + p->s.width) >= b->center.x - b->width &&
           (p->s.center.x - p->s.width) <= b->center.x + b->width &&
@@ -603,7 +595,6 @@ void render(Game *game)
     int bottom = top - WINDOW_HEIGHT;
 
     if (mission) {
-
 
         centerCamera(left,right,bottom,top);
         tileBackground();
@@ -704,13 +695,9 @@ void render(Game *game)
         //refocus camera on start screen area
         centerCamera(0,WINDOW_WIDTH,0,WINDOW_HEIGHT);
 
-//        r_texture();
-//        glBindTexture(GL_TEXTURE_2D, 0);
-//        glEnable(GL_TEXTURE_2D);
-//        glBindTexture(GL_TEXTURE_2D);
         Rect r;
-        r.bot = 400;
-        r.left = 300;
+        r.bot = 260;
+        r.left = 285;
         r.center = 0;
         if( lives > 0 ) {
             r_texture();
@@ -721,12 +708,11 @@ void render(Game *game)
 
         if( lives <= 0 ) {
             fmod_stopsound();
-            fmod_playsound(1);
+            play_gameOver();
             r_gameOver();
-            //glDisable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, 0);
             glEnable(GL_TEXTURE_2D);
-            ggprint16(&r, 150, 0x00ff0000, "G A M E  O V E R");
+            //ggprint16(&r, 150, 0x00ff0000, "G A M E  O V E R");
         }
     }
 
