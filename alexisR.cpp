@@ -1,7 +1,8 @@
-//
-//Author: Alexis Ragus
-//Purpose: Refractoring of CS335 project
-//
+/* 
+ * Alexis Ragus
+ * cs335 project: Uberdude
+ * textures & sound
+ */
 
 #include <iostream>
 #include <cstdlib>
@@ -18,6 +19,14 @@ extern "C" {
 #define WINDOW_WIDTH  800
 #define WINDOW_HEIGHT 600
 #define numbox 3
+
+#define USE_SOUND
+
+#ifdef USE_SOUND
+#include <FMOD/fmod.h>
+#include <FMOD/wincompat.h>
+#include "fmod.h"
+#endif
 
 Ppmimage *maverickImage=NULL;
 Ppmimage *overImage=NULL;
@@ -41,7 +50,7 @@ void platforms(void)
 
     //level
     glBindTexture(GL_TEXTURE_2D, levelTexture);
-    
+
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
@@ -70,18 +79,14 @@ void drawPlatforms(float w, float h)
 
 void texture(void)
 {
-    //Clear the screen
     glClearColor(1.0, 1.0, 1.0, 1.0);
     //glClear(GL_COLOR_BUFFER_BIT);
-    //load the images file into a ppm structure.
     maverickImage = ppm6GetImage("./images/maverick.ppm");
     //create opengl texture elements
     glGenTextures(1, &maverickTexture);
 
-    //---------------------------------------------------------------------
     //maverick
     glBindTexture(GL_TEXTURE_2D, maverickTexture);
-    //
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
@@ -109,6 +114,36 @@ void r_texture()
         glEnd();
     }
 
+}
+
+
+void createsounds(void)
+{
+    #ifdef USE_SOUND
+    //FMOD_RESULT result;
+    if (fmod_init()) {
+        printf("ERROR - createsounds\n\n");
+        return;
+    }
+    if (fmod_createsound((const char *)"./title.mp3", 0)) {
+        printf("ERROR - createsounds\n\n");
+        return;
+    }
+    //if (fmod_createsound("./sounds/game_over.mp3", 1)) {
+    //    printf("ERROR - fmod_createsound()\n\n");
+    //    return;
+    //}
+    fmod_setmode(0,FMOD_LOOP_OFF);
+    //fmod_playsound(0);
+    //fmod_systemupdate();
+    #endif //USE_SOUND
+}
+
+void playsound(void)
+{
+    #ifdef USE_SOUND
+    fmod_playsound(0);
+    #endif
 }
 
 /*

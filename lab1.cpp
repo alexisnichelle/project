@@ -33,6 +33,14 @@ extern "C" {
 #define MAX_PARTICLES 1
 #define GRAVITY 1
 
+#define USE_SOUND
+
+#ifdef USE_SOUND
+#include <FMOD/fmod.h>
+#include <FMOD/wincompat.h>
+#include "fmod.h"
+#endif
+
 //X Windows variables
 Display *dpy;
 Window win;
@@ -123,6 +131,8 @@ int main(void)
     srand(time(NULL));
     initXWindows();
     init_opengl();
+    createsounds();
+    playsound();
     //declare game object
     Game game;
     game.n=0;
@@ -556,7 +566,7 @@ void movement(Game *game)
     }
 
     if(liveboss){
-//extern void bossShot(struct  Projectile * projectile, int &n, float charx, float bossx, float bossy,int bossw, int bossh);
+    //extern void bossShot(struct  Projectile * projectile, int &n, float charx, float bossx, float bossy,int bossw, int bossh);
 
         bossShot(game->projectile,game->n,p->s.center.x,game->boss.s.center.x,game->boss.s.center.y,game->boss.s.width
                 ,game->boss.s.height);
