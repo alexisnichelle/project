@@ -10,3 +10,5 @@ collision rewrite:
 5/29 Character takes damage from shots now, currently can take ten shots
 5/29 boss is doing a simple shot routine, I have no way to test if its firing too often or two slow on my machine, will have to 
     fine tune it later
+
+5/30 space bar to shoot instead of down key
