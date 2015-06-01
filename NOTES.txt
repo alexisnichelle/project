@@ -12,3 +12,7 @@ collision rewrite:
     fine tune it later
 
 5/30 space bar to shoot instead of down key
+
+ADD:
+-more sound
+-second level
