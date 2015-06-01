@@ -50,6 +50,7 @@ GLXContext glc;
 //
 //time definitions, used across files
 struct timespec timeBullet;
+struct timespec timeSound;
 //returns difference in time from start to end
 
 static int lives = 3;
@@ -145,6 +146,7 @@ int main(void)
     clock_gettime(CLOCK_REALTIME, &timeStart);
     clock_gettime(CLOCK_REALTIME, &timeBullet);
     clock_gettime(CLOCK_REALTIME, &timeBossShot);
+    clock_gettime(CLOCK_REALTIME, &timeSound);
 
     //zero out array of all possible key strokes
     for (int i = 0; i < 65536;i++){
@@ -349,41 +351,8 @@ int check_keys(XEvent *e, Game *game)
     } else {
         return 0;
     }
-    /*depreciated keychecks, keep for debugging
-      Character *p;
-      p = &game->character;
-
-    //Was there input from the keyboard?
-    if (e->type == KeyPress) {
-    if (key == XK_Escape) {
-    return 1;
-    }
-    if (key == XK_Right) {
-    p->velocity.x = 3;
-    }
-
-    if (key == XK_Left) {
-    p->velocity.x = -3;
-    }
-
-    if (key == XK_Up) {
-    if(!((p->velocity.y > .1) || (p->velocity.y < -.1) ) ){
-    p->velocity.y = 30.0;
-    }
-    }
-
-    if (key == XK_Down) {
-    makeProjectile(game, (p->s.center.x + p->s.width + 0.1),p->s.center.y,10.0,0.0,200,10,10);
-
-    } 
-    }
-
-    if (e->type == KeyRelease) {
-
-
-    }
-    return 0;*/
 }
+
 void checkMovement(Game *game)
 {
     Character *p;
@@ -707,8 +676,8 @@ void render(Game *game)
         }
 
         if( lives <= 0 ) {
-            fmod_stopsound();
-            play_gameOver();
+            //fmod_stopsound();
+            //play_gameOver();
             r_gameOver();
             glBindTexture(GL_TEXTURE_2D, 0);
             glEnable(GL_TEXTURE_2D);
