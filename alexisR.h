@@ -12,5 +12,6 @@ extern void play_gameOver(void);
 extern void sound(void);
 extern void game_over(void);
 extern void r_gameOver(void);
+extern void level2(struct Shape *platform, int &num);
 
 #endif

@@ -13,6 +13,8 @@ collision rewrite:
 
 5/30 space bar to shoot instead of down key
 
-ADD:
--more sound
--second level
+6/01 started second level
+
+NEED TO FIX:
+-Background texture issues for second level
+-Sound for title screen & different levels

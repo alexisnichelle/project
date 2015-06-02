@@ -107,8 +107,9 @@ struct Game {
             box[i].center.x = 1;
             box[i].center.y = 1;
         }
-        buildlevel(box,curbox);
-        level(box,curbox);
+        buildlevel(box, curbox);
+        level(box, curbox);
+        level2(box, curbox);
         n=0;
     }
 };
@@ -442,6 +443,34 @@ void movement(Game *game)
                 //kill it
                 liveboss = false;
                 //do death anim
+
+                //level 2
+                p->s.center.x = 5200;
+                p->s.center.y = 100;
+
+                //if off platform reposition to 5200, 100
+                if (p->s.center.y < -200.0) {
+                    p->s.center.x = 5200;
+                    p->s.center.y = 100;
+                    std::cout <<"you died"<<std::endl;
+                    dead = true;
+                    mission = false;
+                    lives--;
+                }
+
+                //loop through box collisions
+                Shape *testbox;
+                for( int boxxy = 0; boxxy < curbox; boxxy++){
+                    testbox = &game->box[boxxy];
+                    if((((proj->s.center.x + proj->s.width) > (testbox->center.x - testbox->width)) &&
+                                ((proj->s.center.x - proj->s.width) < (testbox->center.x + testbox->width)) &&
+                                ((proj->s.center.y + proj->s.height) > (testbox->center.y - testbox->height)) &&
+                                ((proj->s.center.y - proj->s.height) < (testbox->center.y + testbox->height))))
+                    {//iff projectile collides with plabtorm
+                        delete_projectile(i,game);
+                    }
+                }
+
             }
             delete_projectile(i,game);
         }//delete if projectile went too far
@@ -526,7 +555,7 @@ void movement(Game *game)
     }
 
     if(liveboss){
-    //extern void bossShot(struct  Projectile * projectile, int &n, float charx, float bossx, float bossy,int bossw, int bossh);
+        //extern void bossShot(struct  Projectile * projectile, int &n, float charx, float bossx, float bossy,int bossw, int bossh);
 
         bossShot(game->projectile,game->n,p->s.center.x,game->boss.s.center.x,game->boss.s.center.y,game->boss.s.width
                 ,game->boss.s.height);
@@ -620,11 +649,11 @@ void render(Game *game)
             //glColor3ub(p->r,p->g,p->b);
 
             if(p->type == 0){
-            drawCharProjSprite(p->s.center.x,p->s.center.y, p->s.width, p->s.height);
+                drawCharProjSprite(p->s.center.x,p->s.center.y, p->s.width, p->s.height);
             }
             if(p->type ==1){
 
-            drawBossProjSprite(p->s.center.x,p->s.center.y, p->s.width, p->s.height);
+                drawBossProjSprite(p->s.center.x,p->s.center.y, p->s.width, p->s.height);
             }
         }
 
