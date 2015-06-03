@@ -2,7 +2,7 @@
  * Tina Tafoya
  * cs335 project: Uberdude
  * creating platforms for level 1
- * 
+ * jetpack cheat code 
  * 
  */
 #include <iostream>
@@ -187,4 +187,10 @@ void buildlevel(Shape *box, int &number)
     number++;
    
 }
-///
+
+void jetpack (Character *p)
+{
+    //float the character with a jetpack cheat
+    //by using the TAB key
+    p->velocity.y = 20;
+}

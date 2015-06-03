@@ -128,7 +128,7 @@ bool mission = false;
 bool dead = false;
 bool twolevel = false;
 
-
+using namespace std;
 int main(void)
 {
     int done=0;
@@ -393,6 +393,11 @@ void checkMovement(Game *game)
     if (keys[XK_space]) {
         //game,x,y,xvel,yvel
         makeProjectile(game, (p->s.center.x + p->s.width + 12.1),p->s.center.y,10.0,0.0,200,10,10);
+    }
+    if (keys[XK_Tab]){
+	//jetpack cheat
+	cout << "TABS" << endl;
+	jetpack(p);
     }
     game = game;
 }
