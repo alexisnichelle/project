@@ -126,7 +126,7 @@ void render(Game *game);
 bool start = true;
 bool mission = false;
 bool dead = false;
-bool twolevel = true;//false;
+bool twolevel = false;
 
 
 int main(void)
@@ -313,7 +313,7 @@ void check_mouse(XEvent *e, Game *game)
         if (e->xbutton.button==1) {
             //Left button was pressed
             if(start){
-                makeParticle(game,9525,590); //e->xbutton.x,y );
+                makeParticle(game,200,190); //e->xbutton.x,y );
                 start = false;
                 mission = true;
             }
