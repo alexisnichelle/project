@@ -28,6 +28,8 @@ extern "C" {
 #define WINDOW_WIDTH  800
 #define WINDOW_HEIGHT 600
 Ppmimage *bgImage = NULL;
+Ppmimage *bgImageTwo = NULL;
+GLuint bgTextureTwo;
 GLuint bgTexture;
 GLuint charTexture[16];
 GLuint idleTexture[6];
@@ -93,14 +95,14 @@ void bossShot(struct  Projectile *projectile, int &n, float charx, float bossx, 
             fireProjectile(projectile,n,bossx - bossw-15, bossy, -5,5);
             fireProjectile(projectile,n,bossx - bossw-15, bossy, -5,0);
             fireProjectile(projectile,n,bossx - bossw-15, bossy, -5,-4);
-            bossDelay = 3.0;
+            bossDelay = 1.5;//3.0;
             break;
         case 1 : 
             fireProjectile(projectile,n,bossx + bossw+15, bossy, 5,5);
             fireProjectile(projectile,n,bossx + bossw+15, bossy, 5,-4);
             fireProjectile(projectile,n,bossx - bossw-15, bossy, -5,5);
             fireProjectile(projectile,n,bossx - bossw-15, bossy, -5,-4);
-            bossDelay = 8.0;
+            bossDelay = 4.0;//8.0;
             break;
         case 2 : 
             fireProjectile(projectile,n,bossx + bossw+15, bossy, 5,5);
@@ -112,13 +114,13 @@ void bossShot(struct  Projectile *projectile, int &n, float charx, float bossx, 
             fireProjectile(projectile,n,bossx , bossy-bossh-16, 5,-6);
             fireProjectile(projectile,n,bossx , bossy-bossh-16, 0,-6);
             fireProjectile(projectile,n,bossx , bossy-bossh-16, -5,-6);
-            bossDelay = 2.0;
+            bossDelay = 1.0;//2.0;
             break;
         case 3 : 
             fireProjectile(projectile,n,bossx , bossy-bossh-16, 5,-6);
             fireProjectile(projectile,n,bossx , bossy-bossh-16, 0,-6);
             fireProjectile(projectile,n,bossx , bossy-bossh-16, -5,-6);
-            bossDelay = 3.0;
+            bossDelay = 1.5;//3.0;
             break;
 
 
@@ -368,6 +370,14 @@ void buildBackgroundImage(void)
     glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D,0,3,bgImage->width,bgImage->height,0,
             GL_RGB,GL_UNSIGNED_BYTE,bgImage->data);
+    glClearColor(1.0,1.0,1.0,1.0);
+    bgImageTwo = ppm6GetImage("./images/leveltwo.ppm");//load a TILEABLE backgroun image
+    glGenTextures(1, &bgTextureTwo);
+    glBindTexture(GL_TEXTURE_2D, bgTextureTwo);
+    glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D,0,3,bgImageTwo->width,bgImageTwo->height,0,
+            GL_RGB,GL_UNSIGNED_BYTE,bgImageTwo->data);
 }
 
 
@@ -378,7 +388,7 @@ void tileBackground(void)
     glColor3f(1.0,1.0,1.0);
     if(bg){
         for(int i = -5; i < 5; i++){
-            for( int j = -4; j < 21; j++){
+            for( int j = -4; j < 17; j++){
                 int y = i * 300;
                 int x = j*300;
                 glBindTexture(GL_TEXTURE_2D, bgTexture);
@@ -390,6 +400,20 @@ void tileBackground(void)
                 glEnd();
             }
         }
+        for(int i = -5; i< 5; i++){
+            for(int j =0; j< 18; j++){
+                int x = i*432 + 7000;
+                int y = j*270;
+                glBindTexture(GL_TEXTURE_2D, bgTextureTwo);
+                glBegin(GL_QUADS);
+                glTexCoord2f(0.0f, 1.0f); glVertex2i(x, y);
+                glTexCoord2f(0.0f, 0.0f); glVertex2i(x, y+270);
+                glTexCoord2f(1.0f, 0.0f); glVertex2i(x+432, y+270);
+                glTexCoord2f(1.0f, 1.0f); glVertex2i(x+432, y);
+                glEnd();
+            }
+        }
+                
     }
     //disable texture after finished to prevent conflict with other draw functions
     glDisable(GL_TEXTURE_2D);
