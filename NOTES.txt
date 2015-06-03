@@ -14,7 +14,10 @@ collision rewrite:
 5/30 space bar to shoot instead of down key
 
 6/01 started second level
+6/02 updated respawn + functionality for 2nd level background, shortened time between boss shots, fixed player rate of fire
 
-NEED TO FIX:
+NEED TO FIX
 -Background texture issues for second level
 -Sound for title screen & different levels
+
+We will have to test on the instructor machine, if it runs faster we may need to add a slowdown to the main rendering loop.
