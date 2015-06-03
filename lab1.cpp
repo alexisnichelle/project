@@ -125,7 +125,7 @@ void render(Game *game);
 bool start = true;
 bool mission = false;
 bool dead = false;
-bool twolevel = true;//false;
+bool twolevel = false;
 
 
 int main(void)
@@ -168,10 +168,11 @@ int main(void)
         render(&game);
         glXSwapBuffers(dpy, win);
         //slowdown for running on DSM MACHINE
+/*
         int slow = 0;
         for(int slower = 0; slower < 8500000;slower++){
             slow = slow + slower;
-        }
+        }*/
     }
     cleanupXWindows();
     return 0;

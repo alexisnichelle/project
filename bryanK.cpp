@@ -402,7 +402,7 @@ void tileBackground(void)
         }
         for(int i = -5; i< 5; i++){
             for(int j =0; j< 18; j++){
-                int x = i*432 + 7000;
+                int x = i*432 + 6900;
                 int y = j*270;
                 glBindTexture(GL_TEXTURE_2D, bgTextureTwo);
                 glBegin(GL_QUADS);
