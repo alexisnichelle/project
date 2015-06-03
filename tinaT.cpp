@@ -1,3 +1,10 @@
+/* 
+ * Tina Tafoya
+ * cs335 project: Uberdude
+ * creating platforms for level 1
+ * 
+ * 
+ */
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
