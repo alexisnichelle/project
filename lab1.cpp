@@ -110,6 +110,7 @@ struct Game {
         buildlevel(box, curbox);
         level(box, curbox);
         level2(box, curbox);
+	level2Cont(box,curbox);
         n=0;
     }
 };

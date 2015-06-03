@@ -668,6 +668,392 @@ void level(Shape *platform, int &num) {
 	num++;
 }
 
+void level2Cont(Shape *platform, int &num) {
+
+	platform[170].width = 25;
+	platform[170].height = 10;
+        platform[170].center.x = 8600;
+	platform[170].center.y = 500;
+	num++;
+
+	platform[171].width = 30;
+	platform[171].height = 10;
+        platform[171].center.x = 8800;
+	platform[171].center.y = 520;
+	num++;
+
+	platform[172].width = 25;
+	platform[172].height = 10;
+        platform[172].center.x = 9000;
+	platform[172].center.y = 540;
+	num++;
+
+	platform[173].width = 100;
+	platform[173].height = 20;
+        platform[173].center.x = 8550;
+	platform[173].center.y = 300;
+	num++;
+
+	platform[174].width = 30;
+	platform[174].height = 10;
+        platform[174].center.x = 9150;
+	platform[174].center.y = 540;
+	num++;
+
+	platform[175].width = 25;
+	platform[175].height = 10;
+        platform[175].center.x = 9250;
+	platform[175].center.y = 400;
+	num++;
+	
+	platform[176].width = 30;
+	platform[176].height = 10;
+        platform[176].center.x = 9400;
+	platform[176].center.y = 500;
+	num++;
+
+	platform[177].width = 100;
+	platform[177].height = 10;
+        platform[177].center.x = 9000;
+	platform[177].center.y = 50;
+	num++;
+
+	platform[178].width = 100;
+	platform[178].height = 10;
+        platform[178].center.x = 9200;
+	platform[178].center.y = 50;
+	num++;
+
+	platform[179].width = 100;
+	platform[179].height = 10;
+        platform[179].center.x = 9400;
+	platform[179].center.y = 50;
+	num++;
+
+	platform[180].width = 30;
+	platform[180].height = 10;
+        platform[180].center.x = 9500;
+	platform[180].center.y = 350;
+	num++;
+
+	platform[181].width = 40;
+	platform[181].height = 10;
+        platform[181].center.x = 9600;
+	platform[181].center.y = 450;
+	num++;
+
+	platform[182].width = 50;
+	platform[182].height = 10;
+	platform[182].center.x = 8750;
+	platform[182].center.y = 200;
+	num++;
+
+	platform[183].width = 100;
+	platform[183].height = 20;
+        platform[183].center.x = 8550;
+	platform[183].center.y = 300;
+	num++;
+
+	platform[184].width = 30;
+	platform[184].height = 10;
+        platform[184].center.x = 9150;
+	platform[184].center.y = 540;
+	num++;
+
+	platform[185].width = 25;
+	platform[185].height = 10;
+        platform[185].center.x = 9250;
+	platform[185].center.y = 400;
+	num++;
+	
+	platform[186].width = 30;
+	platform[186].height = 10;
+        platform[186].center.x = 9400;
+	platform[186].center.y = 500;
+	num++;
+
+	platform[187].width = 100;
+	platform[187].height = 10;
+        platform[187].center.x = 9000;
+	platform[187].center.y = 50;
+	num++;
+
+	platform[188].width = 100;
+	platform[188].height = 10;
+        platform[188].center.x = 9200;
+	platform[188].center.y = 50;
+	num++;
+
+	platform[189].width = 100;
+	platform[189].height = 10;
+        platform[189].center.x = 9400;
+	platform[189].center.y = 50;
+	num++;
+
+	platform[190].width = 30;
+	platform[190].height = 10;
+        platform[190].center.x = 9700;
+	platform[190].center.y = 350;
+	num++;
+
+	platform[191].width = 40;
+	platform[191].height = 10;
+        platform[191].center.x = 9950;
+	platform[191].center.y = 350;
+	num++;
+
+	platform[192].width = 100;
+	platform[192].height = 50;
+	platform[192].center.x = 10325;
+	platform[192].center.y = 200;
+	num++;
+
+	platform[193].width = 100;
+	platform[193].height = 50;
+        platform[193].center.x = 10325;
+	platform[193].center.y = 100;
+	num++;
+
+	platform[194].width = 100;
+	platform[194].height = 50;
+        platform[194].center.x = 10325;
+	platform[194].center.y = 0;
+	num++;
+
+	platform[195].width = 100;
+	platform[195].height = 10;
+        platform[195].center.x = 9600;
+	platform[195].center.y = 50;
+	num++;
+	
+	platform[196].width = 100;
+	platform[196].height = 10;
+        platform[196].center.x = 9800;
+	platform[196].center.y = 50;
+	num++;
+
+	platform[197].width = 100;
+	platform[197].height = 50;
+        platform[197].center.x = 10425;
+	platform[197].center.y = 0;
+	num++;
+
+	platform[198].width = 100;
+	platform[198].height = 50;
+        platform[198].center.x = 10425;
+	platform[198].center.y = 100;
+	num++;
+
+	platform[199].width = 100;
+	platform[199].height = 50;
+        platform[199].center.x = 10425;
+	platform[199].center.y = 200;
+	num++;
+
+	platform[200].width = 100;
+	platform[200].height = 50;
+	platform[200].center.x = 10625;
+	platform[200].center.y = 0;
+	num++;
+
+	platform[201].width = 100;
+	platform[201].height = 50;
+	platform[201].center.x = 10625;
+	platform[201].center.y = 100;
+	num++;
+
+	platform[202].width = 100;
+	platform[202].height = 50;
+	platform[202].center.x = 10625;
+	platform[202].center.y = 200;
+	num++;
+
+	platform[203].width = 100;
+	platform[203].height = 50;
+	platform[203].center.x = 10625;
+	platform[203].center.y = 300;
+	num++;
+
+	platform[204].width = 100;
+	platform[204].height = 50;
+	platform[204].center.x = 10625;
+	platform[204].center.y = 400;
+	num++;
+
+	platform[205].width = 100;
+	platform[205].height = 50;
+	platform[205].center.x = 10825;
+	platform[205].center.y = 0;
+	num++;
+
+	platform[206].width = 100;
+	platform[206].height = 50;
+	platform[206].center.x = 10825;
+	platform[206].center.y = 100;
+	num++;
+
+	platform[207].width = 100;
+	platform[207].height = 50;
+	platform[207].center.x = 10825;
+	platform[207].center.y = 200;
+	num++;
+
+	platform[208].width = 100;
+	platform[208].height = 50;
+	platform[208].center.x = 10825;
+	platform[208].center.y = 300;
+	num++;
+
+	platform[209].width = 100;
+	platform[209].height = 50;
+	platform[209].center.x = 10825;
+	platform[209].center.y = 400;
+	num++;
+
+	platform[210].width = 100;
+	platform[210].height = 50;
+	platform[210].center.x = 11025;
+	platform[210].center.y = 0;
+	num++;
+
+	platform[211].width = 100;
+	platform[211].height = 50;
+	platform[211].center.x = 11025;
+	platform[211].center.y = 100;
+	num++;
+
+	platform[212].width = 100;
+	platform[212].height = 50;
+	platform[212].center.x = 11025;
+	platform[212].center.y = 200;
+	num++;
+
+	platform[213].width = 100;
+	platform[213].height = 50;
+	platform[213].center.x = 11025;
+	platform[213].center.y = 300;
+	num++;
+
+	platform[214].width = 100;
+	platform[214].height = 50;
+	platform[214].center.x = 11025;
+	platform[214].center.y = 400;
+	num++;
+
+	platform[215].width = 100;
+	platform[215].height = 50;
+	platform[215].center.x = 11225;
+	platform[215].center.y = 0;
+	num++;
+
+	platform[216].width = 100;
+	platform[216].height = 50;
+	platform[216].center.x = 11425;
+	platform[216].center.y = 0;
+	num++;
+
+	platform[217].width = 100;
+	platform[217].height = 50;
+	platform[217].center.x = 11625;
+	platform[217].center.y = 0;
+	num++;
+
+	platform[218].width = 100;
+	platform[218].height = 50;
+	platform[218].center.x = 11825;
+	platform[218].center.y = 0;
+	num++;
+
+	platform[219].width = 100;
+	platform[219].height = 50;
+	platform[219].center.x = 11825;
+	platform[219].center.y = 100;
+	num++;
+
+	platform[220].width = 100;
+	platform[220].height = 50;
+	platform[220].center.x = 11825;
+	platform[220].center.y = 200;
+	num++;
+
+	platform[221].width = 100;
+	platform[221].height = 50;
+	platform[221].center.x = 11825;
+	platform[221].center.y = 300;
+	num++;
+
+	platform[222].width = 100;
+	platform[222].height = 50;
+	platform[222].center.x = 11825;
+	platform[222].center.y = 400;
+	num++;
+
+	platform[223].width = 100;
+	platform[223].height = 50;
+	platform[223].center.x = 12025;
+	platform[223].center.y = 0;
+	num++;
+
+	platform[224].width = 100;
+	platform[224].height = 50;
+	platform[224].center.x = 12025;
+	platform[224].center.y = 100;
+	num++;
+
+	platform[225].width = 100;
+	platform[225].height = 50;
+	platform[225].center.x = 12025;
+	platform[225].center.y = 200;
+	num++;
+
+	platform[226].width = 100;
+	platform[226].height = 50;
+	platform[226].center.x = 12025;
+	platform[226].center.y = 300;
+	num++;
+
+	platform[227].width = 100;
+	platform[227].height = 50;
+	platform[227].center.x = 12025;
+	platform[227].center.y = 400;
+	num++;
+
+	platform[228].width = 30;
+	platform[228].height = 15;
+	platform[228].center.x = 11250;
+	platform[228].center.y = 200;
+	num++;
+
+	platform[229].width = 30;
+	platform[229].height = 15;
+	platform[229].center.x = 11610;
+	platform[229].center.y = 200;
+	num++;
+
+	platform[230].width = 100;
+	platform[230].height = 50;
+	platform[230].center.x = 11825;
+	platform[230].center.y = 450;
+	num++;
+
+	platform[231].width = 100;
+	platform[231].height = 50;
+	platform[231].center.x = 12025;
+	platform[231].center.y = 450;
+	num++;
+
+	platform[232].width = 100;
+	platform[232].height = 50;
+	platform[232].center.x = 11025;
+	platform[232].center.y = 450;
+	num++;
+
+	platform[233].width = 100;
+	platform[233].height = 50;
+	platform[233].center.x = 10825;
+	platform[233].center.y = 450;
+	num++;
+}
 /*void makeEnemy(Boss *boss, Projectile *proj) {
 	Boss enemy;
 	*boss = enemy;
