@@ -126,7 +126,7 @@ void render(Game *game);
 bool start = true;
 bool mission = false;
 bool dead = false;
-bool twolevel = false;
+bool twolevel = true;//false;
 
 
 int main(void)
@@ -313,7 +313,7 @@ void check_mouse(XEvent *e, Game *game)
         if (e->xbutton.button==1) {
             //Left button was pressed
             if(start){
-                makeParticle(game,200,190); //e->xbutton.x,y );
+                makeParticle(game,9525,590); //e->xbutton.x,y );
                 start = false;
                 mission = true;
             }
@@ -431,7 +431,7 @@ void movement(Game *game)
                     //do death anim
                     if(twolevel){
                         p->s.center.x = 5200;
-                        p->s.center.y = 100;
+                        p->s.center.y = 150;
                     }else{
                         p->s.center.x = 200;
                         p->s.center.y = 190;
@@ -460,7 +460,7 @@ void movement(Game *game)
                     //level 2
                     twolevel = true;
                     p->s.center.x = 5200;
-                    p->s.center.y = 100;
+                    p->s.center.y = 150;
 
                     //if off platform reposition to 5200, 100
                     /*
@@ -579,7 +579,7 @@ void movement(Game *game)
         if (p->s.center.y < -200.0) {
             if(twolevel){
                 p->s.center.x = 5200;
-                p->s.center.y = 100;
+                p->s.center.y = 150;
             }else{
 
                 p->s.center.x = 200;

@@ -400,10 +400,10 @@ void tileBackground(void)
                 glEnd();
             }
         }
-        for(int i = -5; i< 5; i++){
-            for(int j =0; j< 18; j++){
-                int x = i*432 + 6900;
-                int y = j*270;
+        for(int zi = -5; zi< 16; zi++){
+            for(int zj =0; zj< 3; zj++){
+                int x = zi*432 + 6900;
+                int y = zj*270;
                 glBindTexture(GL_TEXTURE_2D, bgTextureTwo);
                 glBegin(GL_QUADS);
                 glTexCoord2f(0.0f, 1.0f); glVertex2i(x, y);
