@@ -18,6 +18,38 @@ extern "C" {
 }
 #include "mystruct.h"
 
+#define USE_SOUND
+#ifdef USE_SOUND
+#include <FMOD/fmod.h>
+#include <FMOD/wincompat.h>
+#include "fmod.h"
+#endif
+
+void music(int trackNo)
+{
+#ifdef USE_SOUND
+    if (fmod_init()) {
+	printf("Error - music\n\n");
+	return;
+    }
+
+    if (trackNo == 1) {
+	if (fmod_createsound((const char *)"./sounds/HeatMan.mp3", 0)) {
+	    printf("Error - HeatMan music\n\n");
+	    return;
+	}
+    } else if (trackNo ==2) {
+	if (fmod_createsound((const char *)"./sounds/AirMan.mp3", 0)) {
+	    printf("Error - AirMan music\n\n");
+	    return;
+	}
+    }
+
+    fmod_setmode(0, FMOD_LOOP_NORMAL);
+#endif
+}
+
+
 int moreLives(XEvent *e, bool &up, bool &down, bool &left, bool &right, bool &b, bool &a) 
 {
     //  for debugging purposes

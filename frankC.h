@@ -5,5 +5,6 @@ void level(struct Shape *platform, int &num);
 void makeEnemy(struct Boss *boss, struct  Projectile *proj);
 void level2Cont(struct Shape *platform, int &num);
 int moreLives(XEvent *e, bool &up, bool &down, bool &left, bool &right, bool &b, bool &a);
+void music(int trackNo);
 
 #endif
