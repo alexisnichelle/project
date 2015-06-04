@@ -2,7 +2,9 @@
  * Tina Tafoya
  * cs335 project: Uberdude
  * creating platforms for level 1
+ * shape collision
  * jetpack cheat code 
+ * level 1 platforms
  * 
  */
 #include <iostream>
@@ -54,6 +56,13 @@ void shapecollision(Character *p, Shape *b)
 	p->velocity.x = 0;
 	p->s.center.x = b->center.x + b->width + p->s.width + .1;
     }
+}
+
+void jetpack (Character *p)
+{
+    //float the character with a jetpack cheat
+    //by using the TAB key
+    p->velocity.y = 20;
 }
 
 void buildlevel(Shape *box, int &number)
@@ -225,9 +234,3 @@ void buildlevel(Shape *box, int &number)
    
 }
 
-void jetpack (Character *p)
-{
-    //float the character with a jetpack cheat
-    //by using the TAB key
-    p->velocity.y = 20;
-}
