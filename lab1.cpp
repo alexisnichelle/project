@@ -501,6 +501,7 @@ void movement(Game *game)
                         p->s.center.x = 200;
                         p->s.center.y = 190;
                     }
+                    
                     std::cout <<"you died"<<std::endl;
                     dead = true;
                     mission = false;
@@ -619,6 +620,7 @@ void movement(Game *game)
                 p->s.center.x = 200;
                 p->s.center.y = 190;
             }
+            stats[0] =100;
             std::cout <<"you died"<<std::endl;
             dead = true;
             mission = false;
