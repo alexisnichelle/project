@@ -140,15 +140,15 @@ void createsounds(void)
         printf("ERROR - createsounds\n\n");
         return;
     }
-    if (fmod_createsound((const char *)"./sounds/game.mp3", 1)) {
+    /*if (fmod_createsound((const char *)"./sounds/game.mp3", 1)) {
         printf("ERROR - fmod_createsound()\n\n");
         return;
     }
     if (fmod_createsound((const char *)"./sounds/game_over.mp3", 2)) {
         printf("ERROR - fmod_createsound()\n\n");
         return;
-    }
-    fmod_setmode(0,FMOD_LOOP_OFF);
+    } */
+    fmod_setmode(0,FMOD_LOOP_NORMAL);
     //fmod_systemupdate();
 #endif //USE_SOUND
 }
