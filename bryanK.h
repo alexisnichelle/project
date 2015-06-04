@@ -21,6 +21,7 @@ extern void buildEnemyPos(struct Boss * enemies, int & numenemy);
 
 //draw functions
 extern void drawBossIdleSprite(float x, float y, int w, int h);
+extern void drawTurret(float x, float y);
 extern void drawHealth(float x, int health);
 extern void drawCharacter(float x, float y, int w, int h);
 extern void drawCharProjSprite(float x, float y, int w, int h);

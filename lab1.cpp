@@ -462,8 +462,8 @@ void movement(Game *game)
                         Boss *enemy = &game->enemies[ndx];
                             if(((proj->s.center.x + proj->s.width) > (enemy->s.center.x - enemy->s.width))
                                 &&((proj->s.center.x - proj->s.width) < (enemy->s.center.x +  enemy->s.width))
-                                &&((proj->s.center.x + proj->s.width) > (enemy->s.center.x - enemy->s.width))
-                                &&((proj->s.center.x - proj->s.width) < (enemy->s.center.x + enemy->s.width))){
+                                &&((proj->s.center.y + proj->s.height) > (enemy->s.center.y - enemy->s.height))
+                                &&((proj->s.center.y - proj->s.height) < (enemy->s.center.y + enemy->s.height))){
                                     delete_projectile(i,game);
                                     enemy->health -=10;
                                     std::cout << "enemy " <<ndx<<"hit health:"<<enemy->health<< std::endl;
@@ -700,6 +700,8 @@ void render(Game *game)
                 Boss *enemy = &game->enemies[i];
                 int xx = enemy->s.center.x;
                 int yy = enemy->s.center.y;
+                drawTurret(xx,yy);
+                /*
                 int w = enemy->s.width;
                 int h = enemy->s.height;
                 glBegin(GL_QUADS);
@@ -708,6 +710,7 @@ void render(Game *game)
                 glVertex2i(xx+w,yy+h);
                 glVertex2i(xx+w,yy-h);
                 glEnd();
+                */
             }
             }
             

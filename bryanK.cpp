@@ -31,11 +31,11 @@ Ppmimage *bgImage = NULL;
 Ppmimage *bgImageTwo = NULL;
 GLuint bgTextureTwo;
 GLuint bgTexture;
-GLuint charTexture[16];
+GLuint charTexture[17];
 GLuint idleTexture[6];
 GLuint cprojTexture[9];
 GLuint silhouetteTexture;
-Ppmimage *charImage[16];
+Ppmimage *charImage[17];
 Ppmimage *idleImage[6];
 Ppmimage *cprojImage[9];
 int bg = 1;
@@ -185,17 +185,17 @@ void bossShot(struct  Projectile *projectile, int &n, float charx, float bossx, 
 void buildEnemyPos(struct Boss * enemies, int & numenemy){
     Boss *enemy = &enemies[0];
     enemy->s.center.x = 2030;
-    enemy->s.center.y = 185;
-    enemy->s.width = 30;
-    enemy->s.height = 30;
+    enemy->s.center.y = 180;
+    enemy->s.width = 18;
+    enemy->s.height = 18;
     enemy->health = 30;
     numenemy++;
     //set second enemy position
     enemy = &enemies[1];
     enemy->s.center.x = 900;
-    enemy->s.center.y = 435;
-    enemy->s.width = 30;
-    enemy->s.height = 30;
+    enemy->s.center.y = 430;
+    enemy->s.width = 18;
+    enemy->s.height = 18;
     enemy->health = 30;
     numenemy++;
 
@@ -284,6 +284,27 @@ void drawBossIdleSprite(float x, float y, int w, int h)
     //glDisable(GL_TEXTURE_2D);
     glPopMatrix();
 }
+
+void drawTurret(float x, float y)
+{
+    glColor3ub(255,255,255);
+    glPushMatrix();
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_ALPHA_TEST);
+    glBindTexture(GL_TEXTURE_2D, charTexture[16]);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f,1.0f); glVertex2i(x-18,y-18);
+    glTexCoord2f(0.0f,0.0f); glVertex2i(x-18,y+18);
+    glTexCoord2f(1.0f,0.0f); glVertex2i(x+18,y+18);
+    glTexCoord2f(1.0f,1.0f); glVertex2i(x+18,y-18);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    //disable alpha blending to avoid conflict on other draw functions
+    glDisable(GL_ALPHA_TEST);
+    //glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+}
+    
 void drawHealth(float x, int health){
     int y = 550;
     x = x+240;
@@ -536,7 +557,8 @@ void buildCharImage()
     //boss sprite
     charImage[14] = ppm6GetImage("./images/boss1.ppm");
     charImage[15] = ppm6GetImage("./images/boss2.ppm");
-    for(int i = 0; i < 16; i++)
+    charImage[16] = ppm6GetImage("./images/turret.ppm");
+    for(int i = 0; i < 17; i++)
     {
         glGenTextures(1, &charTexture[i]);
         glGenTextures(1, &silhouetteTexture);
