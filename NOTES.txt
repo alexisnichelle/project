@@ -21,3 +21,12 @@ NEED TO FIX
 -Sound for title screen & different levels
 
 We will have to test on the instructor machine, if it runs faster we may need to add a slowdown to the main rendering loop.
+
+
+CAMERA EXPLANATION
+    our game renders the entire level constantly, to simulate a moving camera in opengl you normally move the objects in the scene as the camera in opengl is given a fixed coordinate. in order to maintain simplicity we instead rendered an orthographic projection that clipped a section of the level the same width and height as our screen, centered upon the character's x coordinate.
+    
+Collision
+    our game uses a modified box collider system, for platform collisions the game checks for four cases, 
+for the first two:if the character's center is between the x-value edges of the platform if then checks if the platform is within the range of y the character top and bottom edge. if it is, the platform then checks if the character center is above the platform, if true the character is treated as being atop the platform and the effect of gravity is canceled, if not, the character's y velocity is zeroed out to cause a fall
+    the other cases are collisions to the sides of the platforms, in these cases the character is moved out of the clipping box of the platform and has its x velocity set to zero.
