@@ -136,7 +136,7 @@ void createsounds(void)
         printf("ERROR - createsounds\n\n");
         return;
     }
-    if (fmod_createsound((const char *)"./sounds/title.mp3", 0)) {
+    if (fmod_createsound((const char *)"./sounds/HeatMan.mp3", 0)) {
         printf("ERROR - createsounds\n\n");
         return;
     }
