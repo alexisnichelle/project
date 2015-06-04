@@ -5,6 +5,7 @@
 //note: PROJECTILE size for character is currently 24w x 12h
 //note: character sprites are currently set to 50x50 pixels
 #include <cstdlib>
+#include <unistd.h>
 #include <ctime>
 #include <cstring>
 #include <cmath>
@@ -168,6 +169,7 @@ int main(void)
         movement(&game);
         render(&game);
         glXSwapBuffers(dpy, win);
+        //usleep(50000);
         //slowdown for running on DSM MACHINE
 /*
         int slow = 0;
@@ -410,12 +412,13 @@ void movement(Game *game)
         // }
         Character *p;
         Projectile *proj;
-        if (game->n <= 0)
-            return;
+      //  if (game->n <= 0)
+        //    return;
 
         p = &game->character;
 
         //projectile physics
+        if(game->n >0){
         for (int i = 0; i < game->n;i++) {
             proj = &game->projectile[i];
             proj->s.center.x += proj->velocity.x;
@@ -510,6 +513,7 @@ void movement(Game *game)
                     }
                 }
             }
+}
 
 
         }
@@ -669,6 +673,7 @@ void render(Game *game)
 
 
         //draw projectiles here
+        if(game->n > 0){
         Projectile *p;
         for (int i=0;i<game->n;i++) {
             p = &game->projectile[i];
@@ -682,6 +687,7 @@ void render(Game *game)
                 drawBossProjSprite(p->s.center.x,p->s.center.y, p->s.width, p->s.height);
             }
         }
+}
 
         //draw all particles here(character)
         w = CHARACTER_WIDTH;
