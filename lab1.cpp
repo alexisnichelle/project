@@ -430,7 +430,6 @@ void checkMovement(Game *game)
     }
     if (keys[XK_Tab]){
 	//jetpack cheat
-	cout << "TABS" << endl;
 	jetpack(p);
     }
     game = game;
@@ -587,38 +586,7 @@ void movement(Game *game)
         //checks for downwards collision
         for (int i = 0; i < curbox; i++) {
             b = &game->box[i];
-            //case 1: above box, between borders
-            if((p->s.center.x > (b->center.x - b->width)) &&//xcheck
-                    (p->s.center.x < (b->center.x + b->width)) &&
-                    ((p->s.center.y ) > (b->center.y - b->height)) &&
-                    ((p->s.center.y - p->s.height) < (b->center.y + b->height))){
-                p->velocity.y = 0;
-                p->s.center.y = b->center.y + b->height + p->s.height + .1;
-            }
-            //case 2: below box, between borders
-            if((p->s.center.x > (b->center.x - b->width)) &&//xcheck
-                    (p->s.center.x < (b->center.x + b->width)) &&
-                    ((p->s.center.y + p->s.height) > (b->center.y - b->height)) &&
-                    ((p->s.center.y + p->s.height) < (b->center.y + b->height))){
-                p->velocity.y = -.11;
-                p->s.center.y = b->center.y - b->height - p->s.height - .1;
-            }
-
-            //case 3: left 
-            if((p->s.center.x  < (b->center.x - b->width)) &&//xcheck
-                    (p->s.center.x + p->s.width  > (b->center.x - b->width)) &&
-                    ((p->s.center.y - p->s.height) < (b->center.y + b->height-2)) &&
-                    ((p->s.center.y + p->s.height) > (b->center.y - b->height))){
-                p->velocity.x = 0;
-                p->s.center.x = b->center.x - b->width - p->s.width - .1;
-            }
-            //case 4: right
-            if((p->s.center.x  > (b->center.x + b->width)) &&//xcheck
-                    (p->s.center.x - p->s.width  < (b->center.x + b->width)) &&
-                    ((p->s.center.y - p->s.height) < (b->center.y + b->height-2)) &&
-                    ((p->s.center.y + p->s.height) > (b->center.y - b->height))){
-                p->velocity.x = 0;
-                p->s.center.x = b->center.x + b->width + p->s.width + .1;
+	    shapecollision(p, b);
             }
 
 
@@ -635,8 +603,6 @@ void movement(Game *game)
               p->velocity.y = 0;
               }
               }*/
-        }
-
         if(liveboss){
             //extern void bossShot(struct  Projectile * projectile, int &n, float charx, float bossx, float bossy,int bossw, int bossh);
 

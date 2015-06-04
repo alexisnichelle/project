@@ -19,6 +19,43 @@ extern "C" {
 }
 #include "mystruct.h"
 
+void shapecollision(Character *p, Shape *b)
+{
+    //case 1: above box, between borders
+    if((p->s.center.x > (b->center.x - b->width)) &&//xcheck
+	    (p->s.center.x < (b->center.x + b->width)) &&
+	    ((p->s.center.y ) > (b->center.y - b->height)) &&
+	    ((p->s.center.y - p->s.height) < (b->center.y + b->height))){
+	p->velocity.y = 0;
+	p->s.center.y = b->center.y + b->height + p->s.height + .1;
+    }
+    //case 2: below box, between borders
+    if((p->s.center.x > (b->center.x - b->width)) &&//xcheck
+	    (p->s.center.x < (b->center.x + b->width)) &&
+	    ((p->s.center.y + p->s.height) > (b->center.y - b->height)) &&
+	    ((p->s.center.y + p->s.height) < (b->center.y + b->height))){
+	p->velocity.y = -.11;
+	p->s.center.y = b->center.y - b->height - p->s.height - .1;
+    }
+
+    //case 3: left 
+    if((p->s.center.x  < (b->center.x - b->width)) &&//xcheck
+	    (p->s.center.x + p->s.width  > (b->center.x - b->width)) &&
+	    ((p->s.center.y - p->s.height) < (b->center.y + b->height-2)) &&
+	    ((p->s.center.y + p->s.height) > (b->center.y - b->height))){
+	p->velocity.x = 0;
+	p->s.center.x = b->center.x - b->width - p->s.width - .1;
+    }
+    //case 4: right
+    if((p->s.center.x  > (b->center.x + b->width)) &&//xcheck
+	    (p->s.center.x - p->s.width  < (b->center.x + b->width)) &&
+	    ((p->s.center.y - p->s.height) < (b->center.y + b->height-2)) &&
+	    ((p->s.center.y + p->s.height) > (b->center.y - b->height))){
+	p->velocity.x = 0;
+	p->s.center.x = b->center.x + b->width + p->s.width + .1;
+    }
+}
+
 void buildlevel(Shape *box, int &number)
 {
     //manually assign individual boxes
