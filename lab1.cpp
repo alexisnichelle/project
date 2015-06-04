@@ -67,10 +67,12 @@ int stats[4];
 
 int curbox = 0;
 bool liveboss = true;
+bool liveboss2 = true;
 struct Game {
     Shape *box;
     Character character;
     Boss boss;//to be used for the main boss at end of level
+    Boss boss2;//to be used for the main boss at end of level
     Boss * enemies;
     Projectile *projectile;
     int n;
@@ -104,6 +106,14 @@ struct Game {
         boss.s.width = 50;
         boss.s.height = 50;
         boss.health = 100;
+	//change position scrub
+        boss2.s.center.x = 11407;//3600;
+        boss2.s.center.y =400;//300;
+        boss2.velocity.x = 0;
+        boss2.velocity.y = 0;
+        boss2.s.width = 50;
+        boss2.s.height = 50;
+        boss2.health = 100;
         for(int i = 0; i < MAX_ENEMIES; i++){
             Boss enemy = enemies[i];
             enemy = enemy;//because C++ warnings are stupid about using children only
@@ -481,6 +491,7 @@ void movement(Game *game)
             proj->s.center.x += proj->velocity.x;
             proj->s.center.y += proj->velocity.y;
             Shape *boss = &game->boss.s;
+            Shape *boss2 = &game->boss2.s;
             //check for boss collision
 
             if((stats[0] > 0)&&//xcheck
@@ -531,27 +542,34 @@ void movement(Game *game)
 
                     //if off platform reposition to 5200, 100
                     /*
-                       if (p->s.center.y < -200.0) {
-                       p->s.center.x = 5200;
-                       p->s.center.y = 100;
-                       std::cout <<"you died"<<std::endl;
-                       dead = true;
-                       mission = false;
-                       lives--;
-                       }*/
+                    }*/
 
-                    //loop through box collisions
-                    Shape *testbox;
-                    for( int boxxy = 0; boxxy < curbox; boxxy++){
-                        testbox = &game->box[boxxy];
-                        if((((proj->s.center.x + proj->s.width) > (testbox->center.x - testbox->width)) &&
-                                    ((proj->s.center.x - proj->s.width) < (testbox->center.x + testbox->width)) &&
-                                    ((proj->s.center.y + proj->s.height) > (testbox->center.y - testbox->height)) &&
-                                    ((proj->s.center.y - proj->s.height) < (testbox->center.y + testbox->height))))
-                        {//iff projectile collides with plabtorm
-                            delete_projectile(i,game);
-                        }
-                    }
+                }
+                delete_projectile(i,game);
+            }//delete if projectile went too far
+                else if(liveboss2&&//xcheck
+                    (((proj->s.center.x + proj->s.width) > (boss2->center.x - boss2->width) &&
+                      (proj->s.center.x - proj->s.width) < (boss2->center.x + boss2->width)) 
+                     &&//ycheck
+                     (((proj->s.center.y + proj->s.height) > (boss2->center.y - boss2->height)) &&
+                      ((proj->s.center.y - proj->s.height) < (boss2->center.y + boss2->height))))){
+                game->boss2.health -= 10;//DAMAGE
+                if(game->boss2.health <=0){
+                    //kill it
+                    liveboss2 = false;
+		    lives = 0;
+		    dead = true;
+		    mission = false;
+                    //do death anim
+
+                    //level 2
+                    //twolevel = true;
+                    //p->s.center.x = 5200;
+                    //p->s.center.y = 150;
+
+                    //if off platform reposition to 5200, 100
+                    /*
+                    }*/
 
                 }
                 delete_projectile(i,game);
@@ -607,8 +625,12 @@ void movement(Game *game)
         if(liveboss){
             //extern void bossShot(struct  Projectile * projectile, int &n, float charx, float bossx, float bossy,int bossw, int bossh);
 
-            bossShot(game->projectile,game->n,p->s.center.x,game->boss.s.center.x,game->boss.s.center.y,game->boss.s.width
-                    ,game->boss.s.height);
+            bossShot(game->projectile,game->n,p->s.center.x,game->boss.s.center.x,game->boss.s.center.y,game->boss.s.width,game->boss.s.height);
+        }
+        if(liveboss2){
+            //extern void bossShot(struct  Projectile * projectile, int &n, float charx, float bossx, float bossy,int bossw, int bossh);
+
+            bossShot(game->projectile,game->n,p->s.center.x,game->boss2.s.center.x,game->boss2.s.center.y,game->boss2.s.width,game->boss2.s.height);
         }
         //if off platform reset to start loc 200,190    
         if (p->s.center.y < -200.0) {
@@ -687,14 +709,14 @@ void render(Game *game)
             h = s->height;
 
             drawBossIdleSprite(s->center.x,s->center.y, w, h);/*
-                                                                 glPushMatrix();
-                                                                 glTranslatef(s->center.x, s->center.y, 0);
-                                                                 glBegin(GL_QUADS);
-                                                                 glVertex2i(-w,-h);
-                                                                 glVertex2i(-w,h);
-                                                                 glVertex2i(w,h);
-                                                                 glVertex2i(w,-h);
-                                                                 glEnd();
+                                                                 glPopMatrix();*/
+        }
+        if(liveboss2){
+            s= &game->boss2.s;
+            w = s->width;
+            h = s->height;
+
+            drawBossIdleSprite(s->center.x,s->center.y, w, h);/*
                                                                  glPopMatrix();*/
         }
         if(numenemy){//if there are enemies
@@ -739,6 +761,7 @@ void render(Game *game)
         w = CHARACTER_WIDTH;
         h = CHARACTER_HEIGHT;
         //remove the following call after simple sprites are added ffs
+        //std::cout << "posx:" <<c->x<<" posy:"<<c->y<< std::endl;
         drawCharacter(c->x,c->y,w,h);
         //temp if for 
         if ((keys[XK_Right])||(keys[XK_Left])) {

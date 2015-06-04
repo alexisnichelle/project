@@ -190,10 +190,26 @@ void buildEnemyPos(struct Boss * enemies, int & numenemy){
     enemy->s.height = 18;
     enemy->health = 30;
     numenemy++;
-    //set second enemy position
+    //enemy pos 2
     enemy = &enemies[1];
     enemy->s.center.x = 900;
     enemy->s.center.y = 430;
+    enemy->s.width = 18;
+    enemy->s.height = 18;
+    enemy->health = 30;
+    numenemy++;
+    //enemy pos 2
+    enemy = &enemies[2];
+    enemy->s.center.x = 6700;
+    enemy->s.center.y = 130;
+    enemy->s.width = 18;
+    enemy->s.height = 18;
+    enemy->health = 30;
+    numenemy++;
+    //enemy pos 2
+    enemy = &enemies[3];
+    enemy->s.center.x = 8550;
+    enemy->s.center.y = 340;
     enemy->s.width = 18;
     enemy->s.height = 18;
     enemy->health = 30;
