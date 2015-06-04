@@ -41,12 +41,15 @@ Ppmimage *cprojImage[9];
 int bg = 1;
 static int bossShotPattern = 0;
 struct timespec timeCharacter;
-struct timespec timeCurrent;
 struct timespec timeBossShot;
+struct timespec timeEnemyShot;
+struct timespec timeCurrent;
+
+
 struct timespec timeStart;
 double oobillion = 1.0/1e9;//for teh nanoseconds
 double bossDelay = 0.0;
-
+double enemyDelay = 2.0;
 
 //function that returns the difference in time between start and end
 double timeDiff(struct timespec *start, struct timespec *end)
@@ -79,6 +82,40 @@ void fireProjectile(struct  Projectile *projectile, int &n, float x, float y, fl
         //clock_gettime(CLOCK_REALTIME, &timeBullet);
 
 }
+
+void enemyFire(struct Projectile * projectile, int &numproj, int x, int y, float xvel, float yvel,int w, int type){
+    Projectile *p = &projectile[numproj];
+        p->r = 100;
+        p->g = 100;
+        p->b = 100;
+        p->type = type;
+        if(xvel > 0){
+        p->s.center.x = x+w+p->s.width+1;
+        }else{
+        p->s.center.x = x-w-p->s.width -1;
+        }
+        p->s.center.y = y;
+        p->velocity.x =xvel;
+        p->velocity.y = yvel;
+        numproj++;
+}
+void enemyAllShoot(struct Projectile *projectile, int&numprojectile, struct Boss * enemies, int &numenemy){
+    if((timeDiff(&timeEnemyShot, &timeCurrent)) >= enemyDelay){//stats[2] ==firerate
+//DO SHIT HERE
+        if(numenemy){
+            for(int i = 0; i < numenemy; i++){
+                Boss *enemy = &enemies[i];
+                int x = enemy->s.center.x;
+                int y = enemy->s.center.y;
+                int w = enemy->s.width;
+                enemyFire(projectile,numprojectile,x,y,-5.0,0,w,1);
+            }
+        }
+        clock_gettime(CLOCK_REALTIME, &timeEnemyShot);
+           
+    }
+}
+
 
 
 //pattern for boss shots, takes in the array of projectiles, number of active projectiles, character x position (for checking)
@@ -136,10 +173,6 @@ void bossShot(struct  Projectile *projectile, int &n, float charx, float bossx, 
     clock_gettime(CLOCK_REALTIME, &timeBossShot);
     }
     /*//testing projectile maker
-    fireProjectile(projectile,n,100,300,5,5); 
-    fireProjectile(projectile,n,100,300,5,0); 
-    fireProjectile(projectile,n,100,300,0,5); 
-    fireProjectile(projectile,n,100,300,0,-5); 
     */
     //warning clears
     charx = charx;
@@ -147,6 +180,25 @@ void bossShot(struct  Projectile *projectile, int &n, float charx, float bossx, 
     bossy = bossy;
     bossw = bossw;
     bossh = bossh;
+}
+
+void buildEnemyPos(struct Boss * enemies, int & numenemy){
+    Boss *enemy = &enemies[0];
+    enemy->s.center.x = 2030;
+    enemy->s.center.y = 185;
+    enemy->s.width = 30;
+    enemy->s.height = 30;
+    enemy->health = 30;
+    numenemy++;
+    //set second enemy position
+    enemy = &enemies[1];
+    enemy->s.center.x = 900;
+    enemy->s.center.y = 435;
+    enemy->s.width = 30;
+    enemy->s.height = 30;
+    enemy->health = 30;
+    numenemy++;
+
 }
 
 

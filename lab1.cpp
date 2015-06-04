@@ -32,6 +32,7 @@ extern "C" {
 #define numbox 2000
 #define MAX_PROJECTILES 10000
 #define MAX_PARTICLES 1
+#define MAX_ENEMIES 30
 #define GRAVITY 1
 
 #define USE_SOUND
@@ -54,6 +55,7 @@ struct timespec timeBullet;
 struct timespec timeSound;
 //returns difference in time from start to end
 
+static int numenemy = 0;
 static int lives = 3;
 int keys[65536];
 //stats as of now are
@@ -69,19 +71,22 @@ struct Game {
     Shape *box;
     Character character;
     Boss boss;//to be used for the main boss at end of level
+    Boss * enemies;
     Projectile *projectile;
     int n;
     ~Game() {
+        delete [] enemies;
         delete [] box;
         delete [] projectile;
     }
     Game() {
+        enemies = new Boss[MAX_ENEMIES];
         box = new Shape[numbox];
         projectile = new Projectile[MAX_PROJECTILES];
         //initialize projectiles to prevent nulls
         for (int i = 0; i < MAX_PROJECTILES; i++) {
             Projectile p = projectile[i];
-            p=p;
+            p=p;//because C++ warnings are stupid when using children only
             p.s.center.x = 0;
             p.s.center.y = 0;
             p.velocity.y = 0;
@@ -99,6 +104,17 @@ struct Game {
         boss.s.width = 50;
         boss.s.height = 50;
         boss.health = 100;
+        for(int i = 0; i < MAX_ENEMIES; i++){
+            Boss enemy = enemies[i];
+            enemy = enemy;//because C++ warnings are stupid about using children only
+            enemy.s.center.x = -10;
+            enemy.s.center.y = -10;
+            enemy.s.width = 1;
+            enemy.s.height = 1;
+            enemy.velocity.x =0;
+            enemy.velocity.y = 0;
+            enemy.health = 30;
+        }
 
 
         //initialize boxes to prevent nulls
@@ -112,6 +128,7 @@ struct Game {
         level(box, curbox);
         level2(box, curbox);
 	level2Cont(box,curbox);
+        buildEnemyPos(enemies,numenemy);
         n=0;
     }
 };
@@ -150,6 +167,7 @@ int main(void)
     clock_gettime(CLOCK_REALTIME, &timeStart);
     clock_gettime(CLOCK_REALTIME, &timeBullet);
     clock_gettime(CLOCK_REALTIME, &timeBossShot);
+    clock_gettime(CLOCK_REALTIME, &timeEnemyShot);
     clock_gettime(CLOCK_REALTIME, &timeSound);
 
     //zero out array of all possible key strokes
@@ -169,8 +187,8 @@ int main(void)
         movement(&game);
         render(&game);
         glXSwapBuffers(dpy, win);
-        //usleep(50000);
         //slowdown for running on DSM MACHINE
+        //usleep(30000);
 /*
         int slow = 0;
         for(int slower = 0; slower < 8500000;slower++){
@@ -264,7 +282,7 @@ void makeParticle(Game *game, int x, int y)
     game->n++;
 }
 
-void makeProjectile(Game *game, float x, float y,float xvel, float yvel,int r, int g, int b) 
+void makeProjectile(Game *game, float x, float y,float xvel, float yvel,int r, int g, int b, int types) 
 {
 
     if (game->n >= MAX_PROJECTILES) {
@@ -277,7 +295,7 @@ void makeProjectile(Game *game, float x, float y,float xvel, float yvel,int r, i
         p->r = r;
         p->g = g;
         p->b = b;
-        p->type = 0;
+        p->type = types;
         p->s.center.x = x;
         p->s.center.y = y;
         p->s.width = 12;
@@ -298,6 +316,15 @@ void delete_projectile(int proj, Game *game){
 
     }
 }
+void delete_enemy(int enemy, Game *game){
+    if(enemy < game->n){
+        memcpy(&game->enemies[enemy], &game->enemies[numenemy -1],
+                sizeof(struct Boss));
+        numenemy--;
+
+    }
+}
+
 
 void check_mouse(XEvent *e, Game *game)
 {
@@ -394,7 +421,7 @@ void checkMovement(Game *game)
     }
     if (keys[XK_space]) {
         //game,x,y,xvel,yvel
-        makeProjectile(game, (p->s.center.x + p->s.width + 12.1),p->s.center.y,10.0,0.0,200,10,10);
+        makeProjectile(game, (p->s.center.x + p->s.width + 12.1),p->s.center.y,10.0,0.0,200,10,10,0);
     }
     if (keys[XK_Tab]){
 	//jetpack cheat
@@ -414,10 +441,36 @@ void movement(Game *game)
         Projectile *proj;
       //  if (game->n <= 0)
         //    return;
-
         p = &game->character;
+        /*    bossShot(game->projectile,game->n,p->s.center.x,game->boss.s.center.x,game->boss.s.center.y,game->boss.s.width
+                    ,game->boss.s.height);
+        }
+  */      
+        enemyAllShoot(game->projectile,game->n, game->enemies, numenemy);
 
         //projectile physics
+        //seperate loop for enemy projectile collisions for ease of reading
+        if(numenemy > 0){
+            if(game->n > 0){
+                for(int i = 0; i < game->n;i++){
+                    proj = &game->projectile[i];
+                    for(int ndx =0; ndx < numenemy;ndx++){
+                        Boss *enemy = &game->enemies[ndx];
+                            if(((proj->s.center.x + proj->s.width) > (enemy->s.center.x - enemy->s.width))
+                                &&((proj->s.center.x - proj->s.width) < (enemy->s.center.x +  enemy->s.width))
+                                &&((proj->s.center.x + proj->s.width) > (enemy->s.center.x - enemy->s.width))
+                                &&((proj->s.center.x - proj->s.width) < (enemy->s.center.x + enemy->s.width))){
+                                    delete_projectile(i,game);
+                                    enemy->health -=10;
+                                    std::cout << "enemy " <<ndx<<"hit health:"<<enemy->health<< std::endl;
+                                    if(enemy->health <= 0){
+                                        delete_enemy(ndx,game);
+                                    }
+                            }
+                    }   
+            }
+        }
+        }
         if(game->n >0){
         for (int i = 0; i < game->n;i++) {
             proj = &game->projectile[i];
@@ -453,7 +506,8 @@ void movement(Game *game)
 
                 }
                 delete_projectile(i,game);
-            } else if(liveboss&&//xcheck
+            }
+                else if(liveboss&&//xcheck
                     (((proj->s.center.x + proj->s.width) > (boss->center.x - boss->width) &&
                       (proj->s.center.x - proj->s.width) < (boss->center.x + boss->width)) 
                      &&//ycheck
@@ -497,7 +551,7 @@ void movement(Game *game)
                 }
                 delete_projectile(i,game);
             }//delete if projectile went too far
-            else if(proj->s.center.x > (p->s.center.x + 400)){
+            else if((proj->s.center.x > (p->s.center.x + 600))||(proj->s.center.x < (p->s.center.x - 600))){
                 delete_projectile(i,game);
             }else {
                 //loop through box collisions
@@ -670,6 +724,22 @@ void render(Game *game)
                                                                  glEnd();
                                                                  glPopMatrix();*/
         }
+        if(numenemy){//if there are enemies
+            for(int i = 0; i<numenemy;i++){
+                Boss *enemy = &game->enemies[i];
+                int xx = enemy->s.center.x;
+                int yy = enemy->s.center.y;
+                int w = enemy->s.width;
+                int h = enemy->s.height;
+                glBegin(GL_QUADS);
+                glVertex2i(xx-w,yy-h);
+                glVertex2i(xx-w,yy+h);
+                glVertex2i(xx+w,yy+h);
+                glVertex2i(xx+w,yy-h);
+                glEnd();
+            }
+            }
+            
 
 
         //draw projectiles here
