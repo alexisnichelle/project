@@ -174,13 +174,18 @@ int main(void)
     for (int i = 0; i < 65536;i++){
         keys[i] = 0;
     }
+    bool up = false, down = false, left = false, right = false;
     //start animation
     while (!done) {
         while (XPending(dpy)) {
             XEvent e;
             XNextEvent(dpy, &e);
-            if (start||dead)
+            if (start) {
                 check_mouse(&e, &game);
+		lives = moreLives(&e, up, down, left, right);
+	    } else if (dead) {
+		check_mouse(&e, &game);
+	    }
             done = check_keys(&e, &game);
         }
         clock_gettime(CLOCK_REALTIME, &timeCurrent);

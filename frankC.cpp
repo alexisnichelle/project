@@ -1,3 +1,9 @@
+/* Frank Clemente
+ * CS335 Project
+ * Group #4
+ */
+
+using namespace std;
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -12,7 +18,30 @@ extern "C" {
 }
 #include "mystruct.h"
 
+int moreLives(XEvent *e, bool &up, bool &down, bool &left, bool &right) {
+    //  for debugging purposes
+    //	cout << XLookupKeysym(&e->xkey, 0) << endl;
 
+    if(XLookupKeysym(&e->xkey, 0) == 65362)
+	    up = true;
+    
+    if(up)
+	if(XLookupKeysym(&e->xkey, 0) == 65364)
+	    down = true;
+
+    if(down)
+	if(XLookupKeysym(&e->xkey, 0) == 65361)
+	    left = true;
+
+    if(left)
+	if(XLookupKeysym(&e->xkey, 0) == 65363)
+	    right = true;
+
+    if(right)
+	return 30;
+
+    return 3;
+}
 void level(Shape *platform, int &num) {
 
 	platform[27].width = 100;
