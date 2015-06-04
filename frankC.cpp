@@ -18,7 +18,8 @@ extern "C" {
 }
 #include "mystruct.h"
 
-int moreLives(XEvent *e, bool &up, bool &down, bool &left, bool &right) {
+int moreLives(XEvent *e, bool &up, bool &down, bool &left, bool &right, bool &b, bool &a) 
+{
     //  for debugging purposes
     //	cout << XLookupKeysym(&e->xkey, 0) << endl;
 
@@ -38,11 +39,20 @@ int moreLives(XEvent *e, bool &up, bool &down, bool &left, bool &right) {
 	    right = true;
 
     if(right)
+	if(XLookupKeysym(&e->xkey, 0) == 98)
+	    b = true;
+
+    if(b)
+	if(XLookupKeysym(&e->xkey, 0) == 97)
+	    a = true;
+
+    if(a)
 	return 30;
 
     return 3;
 }
-void level(Shape *platform, int &num) {
+void level(Shape *platform, int &num) 
+{
 
 	platform[27].width = 100;
 	platform[27].height = 10;
@@ -697,7 +707,8 @@ void level(Shape *platform, int &num) {
 	num++;
 }
 
-void level2Cont(Shape *platform, int &num) {
+void level2Cont(Shape *platform, int &num) 
+{
 
 	platform[170].width = 25;
 	platform[170].height = 10;
@@ -1083,7 +1094,8 @@ void level2Cont(Shape *platform, int &num) {
 	platform[233].center.y = 450;
 	num++;
 }
-/*void makeEnemy(Boss *boss, Projectile *proj) {
+/*void makeEnemy(Boss *boss, Projectile *proj) 
+{
 	Boss enemy;
 	*boss = enemy;
 //	Projectile p = new Projectile[10];

@@ -174,7 +174,7 @@ int main(void)
     for (int i = 0; i < 65536;i++){
         keys[i] = 0;
     }
-    bool up = false, down = false, left = false, right = false;
+    bool up = false, down = false, left = false, right = false, b = false, a = false;
     //start animation
     while (!done) {
         while (XPending(dpy)) {
@@ -182,7 +182,7 @@ int main(void)
             XNextEvent(dpy, &e);
             if (start) {
                 check_mouse(&e, &game);
-		lives = moreLives(&e, up, down, left, right);
+		lives = moreLives(&e, up, down, left, right, b, a);
 	    } else if (dead) {
 		check_mouse(&e, &game);
 	    }
