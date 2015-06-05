@@ -65,6 +65,7 @@ int keys[65536];
 //[3] damage
 int stats[4];
 
+bool end = false;
 int curbox = 0;
 bool liveboss = true;
 bool liveboss2 = true;
@@ -813,8 +814,11 @@ void render(Game *game)
         if( lives <= 0 ) {
             //fmod_stopsound();
             //play_gameOver();
-	    music(4);
-	    playsound();
+	    if (!end) {
+		music(4);
+		playsound();
+		end = true;
+	    }
             r_gameOver();
             glBindTexture(GL_TEXTURE_2D, 0);
             glEnable(GL_TEXTURE_2D);
