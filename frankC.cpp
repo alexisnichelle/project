@@ -36,79 +36,114 @@ void music(int trackNo)
     }
 
 
-    if (trackNo == 0) {
-	if (!songPlaying) {
-	    if (fmod_createsound((const char *)"./sounds/TitleScreen.mp3", 0)) {
-		printf("Error - TitleScreen.mp3\n\n");
-		return;
-	    }
-	    songPlaying = true;
-	} else {
-	    fmod_stopsound();
-	    if (fmod_createsound((const char *)"./sounds/TitleScreen.mp3", 0)) {
-		printf("Error - TitleScreen.mp3\n\n");
-		return;
-	    }
-	}
-    } else if (trackNo == 1) {
-	if (!songPlaying) {
-	    if (fmod_createsound((const char *)"./sounds/HeatMan.mp3", 0)) {
-		printf("Error - HeatMan music\n\n");
-		return;
-	    }
-	} else {
-	    fmod_stopsound();
-	    if (fmod_createsound((const char *)"./sounds/HeatMan.mp3", 0)) {
-		printf("Error - HeatMan music\n\n");
+    switch(trackNo) {
+	case 0:
+	    if (!songPlaying) {
+		if (fmod_createsound((const char *)"./sounds/TitleScreen.mp3", 0)) {
+		    printf("Error - TitleScreen.mp3\n\n");
+		    return;
+		}
 		songPlaying = true;
-		return;
+	    } else {
+		fmod_stopsound();
+		if (fmod_createsound((const char *)"./sounds/TitleScreen.mp3", 0)) {
+		    printf("Error - TitleScreen.mp3\n\n");
+		    return;
+		}
 	    }
-	}
-    } else if (trackNo == 2) {
-	if (!songPlaying) {
-	    if (fmod_createsound((const char *)"./sounds/AirMan.mp3", 0)) {
-		printf("Error - AirMan music\n\n");
-		return;
+	    break;
+	case 1:
+	    if (!songPlaying) {
+		if (fmod_createsound((const char *)"./sounds/HeatMan.mp3", 0)) {
+		    printf("Error - HeatMan music\n\n");
+		    return;
+		}
+	    } else {
+		fmod_stopsound();
+		if (fmod_createsound((const char *)"./sounds/HeatMan.mp3", 0)) {
+		    printf("Error - HeatMan music\n\n");
+		    songPlaying = true;
+		    return;
+		}
 	    }
-	} else {
-	    fmod_stopsound();
-	    if (fmod_createsound((const char *)"./sounds/AirMan.mp3", 0)) {
-		printf("Error - AirMan music\n\n");
-		songPlaying = true;
-		return;
+	    break;
+	case 2:
+	    if (!songPlaying) {
+		if (fmod_createsound((const char *)"./sounds/AirMan.mp3", 0)) {
+		    printf("Error - AirMan music\n\n");
+		    return;
+		}
+	    } else {
+		fmod_stopsound();
+		if (fmod_createsound((const char *)"./sounds/AirMan.mp3", 0)) {
+		    printf("Error - AirMan music\n\n");
+		    songPlaying = true;
+		    return;
+		}
 	    }
-	}
-    } else if (trackNo == 3) {
-	if (!songPlaying) {
-	    if (fmod_createsound((const char *)"./sounds/Boss.mp3", 0)) {
-		printf("Error - Boss music\n\n");
-		return;
+	    break;
+	case 3:
+	    if (!songPlaying) {
+		if (fmod_createsound((const char *)"./sounds/MetalMan.mp3", 0)) {
+		    printf("Error - MetalMan music\n\n");
+		    return;
+		}
+	    } else {
+		fmod_stopsound();
+		if (fmod_createsound((const char *)"./sounds/MetalMan.mp3", 0)) {
+		    printf("Error - MetalMan music\n\n");
+		    songPlaying = true;
+		    return;
+		}
 	    }
-	} else {
-	    fmod_stopsound();
-	    if (fmod_createsound((const char *)"./sounds/Boss.mp3", 0)) {
-		printf("Error - Boss music\n\n");
-		songPlaying = true;
-		return;
+	    break;
+	case 4:
+	    if (!songPlaying) {
+		if (fmod_createsound((const char *)"./sounds/Boss.mp3", 0)) {
+		    printf("Error - Boss music\n\n");
+		    return;
+		}
+	    } else {
+		fmod_stopsound();
+		if (fmod_createsound((const char *)"./sounds/Boss.mp3", 0)) {
+		    printf("Error - Boss music\n\n");
+		    songPlaying = true;
+		    return;
+		}
 	    }
-	}
-    } else if (trackNo == 4) {
-	if (!songPlaying) {
-	    if (fmod_createsound((const char *)"./sounds/GameOver.mp3", 0)) {
-		printf("Error - GameOver music\n\n");
-		return;
+	    break;
+	case 5:
+	    if (!songPlaying) {
+		if (fmod_createsound((const char *)"./sounds/BossDefeated.mp3", 0)) {
+		    printf("Error - BossDefeated music\n\n");
+		    return;
+		}
+	    } else {
+		fmod_stopsound();
+		if (fmod_createsound((const char *)"./sounds/BossDefeated.mp3", 0)) {
+		    printf("Error - BossDefeated music\n\n");
+		    songPlaying = true;
+		    return;
+		}
 	    }
-	} else {
-	    fmod_stopsound();
-	    if (fmod_createsound((const char *)"./sounds/GameOver.mp3", 0)) {
-		printf("Error - GameOver music\n\n");
-		songPlaying = true;
-		return;
+	    break;
+	case 6:
+	    if (!songPlaying) {
+		if (fmod_createsound((const char *)"./sounds/GameOver.mp3", 0)) {
+		    printf("Error - GameOver music\n\n");
+		    return;
+		}
+	    } else {
+		fmod_stopsound();
+		if (fmod_createsound((const char *)"./sounds/GameOver.mp3", 0)) {
+		    printf("Error - GameOver music\n\n");
+		    return;
+		}
 	    }
-	}
+	    break;
     }
 
-    if (trackNo != 4) {
+    if (trackNo != 6) {
 	fmod_setmode(0, FMOD_LOOP_NORMAL);
     }
 #endif

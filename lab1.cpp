@@ -815,7 +815,7 @@ void render(Game *game)
             //fmod_stopsound();
             //play_gameOver();
 	    if (!end) {
-		music(4);
+		music(6);
 		playsound();
 		end = true;
 	    }
