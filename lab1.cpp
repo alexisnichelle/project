@@ -163,7 +163,7 @@ int main(void)
     srand(time(NULL));
     initXWindows();
     init_opengl();
-    createsounds();
+    music(0);
     playsound();
     //declare game object
     Game game;
@@ -360,6 +360,8 @@ void check_mouse(XEvent *e, Game *game)
                 makeParticle(game,200,190); //e->xbutton.x,y );
                 start = false;
                 mission = true;
+		music(1);
+		playsound();
             }
             if(dead){
                 if(lives > 0) {
@@ -539,7 +541,8 @@ void movement(Game *game)
                     twolevel = true;
                     p->s.center.x = 5200;
                     p->s.center.y = 150;
-
+		    music(2);
+		    playsound(); 
                     //if off platform reposition to 5200, 100
                     /*
                     }*/
@@ -560,6 +563,8 @@ void movement(Game *game)
 		    lives = 0;
 		    dead = true;
 		    mission = false;
+		    music(2);
+		    playsound();
                     //do death anim
 
                     //level 2
@@ -808,6 +813,8 @@ void render(Game *game)
         if( lives <= 0 ) {
             //fmod_stopsound();
             //play_gameOver();
+	    music(4);
+	    playsound();
             r_gameOver();
             glBindTexture(GL_TEXTURE_2D, 0);
             glEnable(GL_TEXTURE_2D);
