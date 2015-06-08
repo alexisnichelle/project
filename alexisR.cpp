@@ -127,7 +127,8 @@ void r_texture()
 
 }
 
-
+//this was our original sound function but was changed during the last few days of the quarter
+//this is no longer being called
 void createsounds(void)
 {
 #ifdef USE_SOUND
