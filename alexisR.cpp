@@ -33,12 +33,15 @@ extern "C" {
 Ppmimage *titleImage=NULL;
 Ppmimage *overImage=NULL;
 Ppmimage *levelImage=NULL;
+Ppmimage *winnerImage=NULL;
+GLuint winnerTexture;
 GLuint titleTexture;
 GLuint levelTexture;
 GLuint overTexture;
 int title = 1;
 int gameOver = 1;
 int level = 1;
+//int winner = 1;
 
 
 void text(void)
@@ -195,6 +198,40 @@ void r_gameOver()
     //texture background
     glColor3f(1.0, 1.0, 1.0);
     glBindTexture(GL_TEXTURE_2D, overTexture);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
+    glTexCoord2f(0.0f, 0.0f); glVertex2i(0, WINDOW_HEIGHT);
+    glTexCoord2f(1.0f, 0.0f); glVertex2i(WINDOW_WIDTH, WINDOW_HEIGHT);
+    glTexCoord2f(1.0f, 1.0f); glVertex2i(WINDOW_WIDTH, 0);
+    glEnd();
+
+}
+
+void winner_screen()
+{
+    //Clear the screen
+    //glClearColor(1.0, 1.0, 1.0, 1.0);
+    winnerImage = ppm6GetImage("./images/winner.ppm");
+    //create opengl texture elements
+    glGenTextures(1, &winnerTexture);
+
+    //game over
+    glBindTexture(GL_TEXTURE_2D, winnerTexture);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3,
+            winnerImage->width, winnerImage->height,
+            0, GL_RGB, GL_UNSIGNED_BYTE, winnerImage->data);
+
+
+}
+
+void r_winner()
+{
+    //texture background
+    glColor3f(1.0, 1.0, 1.0);
+    glBindTexture(GL_TEXTURE_2D, winnerTexture);
     glBegin(GL_QUADS);
     glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
     glTexCoord2f(0.0f, 0.0f); glVertex2i(0, WINDOW_HEIGHT);

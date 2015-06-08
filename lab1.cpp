@@ -69,6 +69,7 @@ bool end = false;
 int curbox = 0;
 bool liveboss = true;
 bool liveboss2 = true;
+bool player_win = false;
 struct Game {
     Shape *box;
     Character character;
@@ -281,6 +282,7 @@ void init_opengl(void)
     buildProjImage();
     platforms();
     game_over();
+    winner_screen();
 }
 
 void makeParticle(Game *game, int x, int y) 
@@ -562,7 +564,8 @@ void movement(Game *game)
                     //kill it
                     liveboss2 = false;
 		    lives = 0;
-		    dead = true;
+		    //dead = true;
+            player_win = true;
 		    mission = false;
 		    music(2);
 		    playsound();
@@ -791,7 +794,14 @@ void render(Game *game)
 
 
     }
-    //click to start
+
+
+    if (player_win) {
+            r_winner();
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glEnable(GL_TEXTURE_2D);        
+    }
+
 
     if (dead) {
         c->y = 250;
@@ -825,6 +835,7 @@ void render(Game *game)
         }
     }
 
+    //click to start
     if (start) {
         r_texture();
         text();
