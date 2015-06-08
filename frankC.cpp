@@ -1,6 +1,15 @@
 /* Frank Clemente
  * CS335 Project
  * Group #4
+ *
+ * Created a function using fmod which controls the sound throughout
+ * the game.
+ *
+ * Created a cheat code that makes the game start with 30 lives by 
+ * constantly checking the events before starting the game.
+ *
+ * The last two functions simply create several platforms.
+ *
  */
 
 using namespace std;
